@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recherche-Hilfe</title> <!-- Titel im Browser-Tab angepasst -->
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Recherche-Hilfe</h1> <!-- "Weltraumtourismus" entfernt -->
+
+        <div class="theme-selection">
+            <label for="themeInput">Thema eingeben:</label>
+            <input type="text" id="themeInput" value="Weltraumtourismus" disabled>
+        </div>
+
+        <nav class="options">
+            <!-- Reihenfolge der Buttons geändert -->
+            <button id="btnZeitungsartikel" class="option-btn">Zeitungsartikel</button>
+            <button id="btnVideos" class="option-btn">Videos</button>
+            <button id="btnPostings" class="option-btn">Postings</button>
+            <button id="btnMemes" class="option-btn">Memes</button>
+            <button id="btnChatbot" class="option-btn">Chatbot</button>
+        </nav>
+
+        <div id="contentArea" class="content-area">
+            <p>Wähle eine Option, um Beiträge zum Thema Weltraumtourismus zu sehen.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
