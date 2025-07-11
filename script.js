@@ -129,9 +129,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <iframe 
                     src="chat-app.html"
                     title="Experten-Chat zum Weltraumtourismus"
-                    style="width: 100%; height: 70vh; border: 1px solid #ccc; border-radius: 8px; overflow: hidden;"
+                    style="width: 100%; height: 95vh; border: 1px solid #ccc; border-radius: 8px; overflow: hidden;"
                 ></iframe>
             `;
+const iframeElement = contentArea.querySelector('iframe');
+if (iframeElement) {
+    iframeElement.focus({ preventScroll: true });
+}
+// Oder, wenn der contentArea selbst das Problem ist:
+contentArea.focus({ preventScroll: true });
             return; // Beende die Funktion hier, da der Inhalt direkt eingefügt wurde
         }
 
