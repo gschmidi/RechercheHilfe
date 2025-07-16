@@ -58,44 +58,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 {
                     title: "Geld",
                     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQje7iaxTA9hePh4WB2kMZEd49oTn2PqLVMWQ&s", 
-                    caption: "Wenn der Weltraumtourismus so teuer ist, dass dein Bankkonto sagt: 'Halt die Klappe und nimm mein Geld!'" 
+                    caption: "Kommentar" 
                 },
                 {
-                    title: "Warte auf meine Weltraumreise",
+                    title: "Space-Visit-Meme",
                     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdm9RU-WH5IZMhWartn-SiOClmJAwnqsPpqw&s", 
-                    caption: "Wenn du jahrelang sparst, um dir endlich ein Ticket für Virgin Galactic leisten zu können."
-                },
-                {
-                    title: "Astronauten-Gehalt",
-                    image: "https://i.kym-cdn.com/entries/icons/original/000/025/360/jason.jpg", 
-                    caption: "Ich, nachdem ich realisiert habe, dass Weltraumtourismus nicht dasselbe ist wie Astronaut zu sein und Millionen zu verdienen."
+                    caption: "Kommentar2"
                 }
             ],
             videos: [
                 {
                     title: "SpaceX Starship Catch",
                     embedUrl: "https://www.youtube.com/embed/Gi3ZcH7g_9c", 
-                    description: "Ein beeindruckendes Video vom Auffangen des Starships von SpaceX, ein Schlüssel zur Zukunft des Weltraumtourismus."
+                    description: "Ein beeindruckendes Video vom Auffangen des Starshipslaunchers, ein Schlüssel zur Zukunft des Weltraumtourismus."
                 },
                 {
-                    title: "Virgin Galactic VSS Unity - Testflug",
+                    title: "Starship - Fünfter Testflug",
                     embedUrl: "https://www.youtube.com/embed/hI9HQfCAw64?si=P5wv2IIXw9x_QanA", 
-                    description: "Ein Blick auf den Testflug der VSS Unity von Virgin Galactic, die Passagiere an den Rand des Weltraums bringen soll."
-                },
-                {
-                    title: "Blue Origin - New Shepard Mission",
-                    embedUrl: "https://www.youtube.com/embed/K84jS_M0R24?si=962f92mO56tWl24a", 
-                    description: "Die New Shepard Kapsel von Blue Origin bringt Touristen für Minuten in die Schwerelosigkeit und bietet atemberaubende Ausblicke auf die Erde."
+                    description: "Kommentar"
                 }
             ],
             postings: [
                 {
                     type: 'twitter',
                     html: `<blockquote class="twitter-tweet" data-dnt="true"><p lang="en" dir="ltr">Space tourism is no longer just a dream. With new developments, reaching the stars might be closer than we think! Imagine gazing down at Earth from above and experiencing the universe firsthand. We&#39;re on the verge of a whole new adventure. The sky is not the limit!</p>&mdash; Gu4rdIr0n (@GabrielaLa33599) <a href="https://twitter.com/GabrielaLa33599/status/1943261716873416929?ref_src=twsrc%5Etfw">July 10, 2025</a></blockquote>`
-                },
-                {
-                    type: 'twitter',
-                    html: `<blockquote class="twitter-tweet" data-dnt="true"><p lang="en" dir="ltr">Blue Origin announces new dates for New Shepard flights! Exciting times for those looking for a suborbital experience. Competition is heating up! 🔥 #BlueOrigin #SpaceFlight</p>&mdash; SpaceBizNews (@SpaceBizNews) <a href="https://twitter.com/SpaceBizNews/status/1790012345678901234?ref_src=twsrc%5Etfw">May 13, 2024</a></blockquote>`
                 }
             ],
             zeitungsartikel: [
@@ -103,16 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: "Schweben statt schwimmen",
                     snippet: "Bislang sind es hauptsächlich Superreiche, die sich einen Weltraumflug leisten können. Und zuletzt ist Weltraumtourismus auch eine gesundheitliche Frage, denn ein Urlaub im All ist etwas grundlegend Anderes als ein Urlaub am Strand. Schwerelosigkeit stellt einen Ausnahmezustand für den Körper dar, der die Reise weitaus unangenehmer macht, als von den meisten Menschen angenommen – und vieles ist aus medizinischer Sicht noch ungewiss. Mit mehr Unterstützung kann die Weltraummedizin nicht nur den Weltraumtourismus ankurbeln, sondern auch Innovationen vorantreiben, die den Alltag aller bereichern.",
                     link: "https://www.derpragmaticus.com/r/weltraumtourismus"
-                },
-                {
-                    title: "Die Kosten des Alls: Wie viel kostet ein Ticket in den Weltraum?",
-                    snippet: "Von Suborbitalflügen bis hin zu Aufenthalten auf der ISS: Die Preisspanne für Weltraumtouristen ist enorm. Wir schlüsseln die Tarife auf und zeigen, was man dafür bekommt.",
-                    link: "https://www.faz.net/aktuell/wissen/weltraum/weltraumtourismus-kosten-und-anbieter-18544907.html"
-                },
-                {
-                    title: "Umweltauswirkungen des Weltraumtourismus: Eine wachsende Besorgnis",
-                    snippet: "Mit der Zunahme kommerzieller Raumflüge wachsen auch die Bedenken hinsichtlich der Umweltauswirkungen, insbesondere der CO2-Emissionen in der oberen Atmosphäre. Experten fordern strengere Regulierungen.",
-                    link: "https://www.sueddeutsche.de/thema/weltraumtourismus"
                 }
             ],
             chatbot: [] // Daten für Chatbot sind leer, da der Inhalt fest im HTML eingebettet wird
