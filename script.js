@@ -258,7 +258,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: "Space Tourism: A Reality in the 2030s",
                     embedUrl: "https://www.youtube.com/embed/2iBk8jsy5KU", 
                     description: "TheScience-t3m"
+                },
+                {
+                    title: "Song: Earth – Mirage Onmymind",
+                    embedUrl: "https://www.youtube.com/embeded/yXJmMwZqpWQ", 
+                    description: "MirageOnmymind"
+                },
+                {
+                    title: "SpaceX Futuristic Space Hotel – The Ultimate Luxury in Orbit!",
+                    embedUrl: "https://www.youtube.com/embeded/auPScv7qD9Q", 
+                    description: "FuturePulseStation"
+                },
+                {
+                    title: "PropTech Pulse – Ready for a stay that’s truly out of this world?",
+                    embedUrl: "https://www.youtube.com/embeded/JCtijrXnq7g", 
+                    description: "Aurum_PropTech"
                 }
+
             ],
             postings: [
     {
