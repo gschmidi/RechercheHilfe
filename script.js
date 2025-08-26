@@ -273,10 +273,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: "PropTech Pulse – Ready for a stay that’s truly out of this world?",
                     embedUrl: "https://www.youtube.com/embeded/JCtijrXnq7g", 
                     description: "Aurum_PropTech"
+                },
+                {
+                    title: "Inside Virgin Galactic’s first tourist spaceflight",
+                    embedUrl: "https://www.youtube.com/embed/2V4VU8p6Au0", 
+                    description: "SkyNews"
                 }
+
 
             ],
             postings: [
+    {
+        'type': 'twitter',
+        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Tourism for successful people: the world&#39;s first space hotel will open as early as 2027.<br><br>Built by Above: Space Development, it will host 400 guests and 112 crew members on a rotating structure designed to create gravity similar to the moon.<br><br>The hotel will offer a full-service… <a href="https://t.co/A6Nr5VNW0u">pic.twitter.com/A6Nr5VNW0u</a></p>&mdash; Black Hole (@konstructivizm) <a href="https://twitter.com/konstructivizm/status/1936988331499483200?ref_src=twsrc%5Etfw">June 23, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+    },
+
+
+    {
+        'type': 'twitter',
+        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Private space tourism is growing, making trips to orbit affordable. <a href="https://twitter.com/hashtag/SpaceTourism?src=hash&amp;ref_src=twsrc%5Etfw">#SpaceTourism</a> <a href="https://twitter.com/hashtag/FutureOfTravel?src=hash&amp;ref_src=twsrc%5Etfw">#FutureOfTravel</a></p>&mdash; Karen Vazquez (@KarenVazqu84161) <a href="https://twitter.com/KarenVazqu84161/status/1951069445247606926?ref_src=twsrc%5Etfw">July 31, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+    },
+    {
+        'type': 'twitter',
+        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Katy Perry says she now looks at Earth through a “whole new perspective” after traveling to space<br><br>She was in space for a total of 11 minutes <a href="https://t.co/3ErSeVJt3d">pic.twitter.com/3ErSeVJt3d</a></p>&mdash; Daily Noud (@DailyNoud) <a href="https://twitter.com/DailyNoud/status/1911819148755149176?ref_src=twsrc%5Etfw">April 14, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+    },
     {
         'type': 'twitter',
         'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space Perspective wants to take tourists on balloon rides to the stratosphere <a href="https://t.co/PReUPCdL6X">https://t.co/PReUPCdL6X</a> <a href="https://t.co/i9ffRuGysD">pic.twitter.com/i9ffRuGysD</a></p>— SPACE.com (@SPACEdotcom) <a href="https://twitter.com/SPACEdotcom/status/1273725686654488576?ref_src=twsrc%5Etfw">June 18, 2020</a></blockquote>'
@@ -663,11 +683,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
 
-        const items = allThemesContentData[currentThemeKey] ? allThemesContentData[currentThemeKey][category] : null;
+        let itemsToDisplay = allThemesContentData[currentThemeKey] ? allThemesContentData[currentThemeKey][category] : null;
 
-        if (!items || items.length === 0) {
+        if (!itemsToDisplay || itemsToDisplay.length === 0) {
             contentArea.innerHTML = `<p>Leider keine ${category}-Beiträge zum Thema "${themeInput.value}" gefunden.</p>`;
             return;
+        }
+
+        if (category === 'zeitungsartikel' || category === 'postings') {
+            itemsToDisplay = shuffleArray(itemsToDisplay);
         }
 
         switch (category) {
@@ -722,7 +746,7 @@ case 'memes':
             }
             break; // Ende des 'memes'-Case
             case 'postings':
-                items.forEach(item => {
+		itemsToDisplay.forEach(item => { 
                     if (item.type === 'twitter') {
                         const tweetWrapper = document.createElement('div');
                         tweetWrapper.classList.add('content-item');
@@ -733,7 +757,7 @@ case 'memes':
                 loadTwitterWidgets(contentArea);
                 break;
             case 'zeitungsartikel':
-                items.forEach(item => {
+                itemsToDisplay.forEach(item => {
                     const articleDiv = document.createElement('div');
                     articleDiv.classList.add('content-item');
                     articleDiv.innerHTML = `
