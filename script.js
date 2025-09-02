@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'journal': "Astrodicticum Simplex"
     },
     {
-        'title': "Der hohe Preis des Weltraumtourismus",
+        'title': "Einst Zukunftsmusik, heute Realität",
         'snippet': "Reiter bleibt in Bezug auf künftigen Weltraumtourismus aber zuversichtlich: „Unser Wunsch wäre es, dass möglichst viele Menschen eher heute als morgen die Gelegenheit bekommen, unseren schönen blauen Planeten von oben zu sehen“, so der ehemalige Astronaut. Wird der Faktor Nachhaltigkeit beim Weltraumtourismus mitgedacht, könnte er in Reiters Augen nämlich noch eine Sache bewirken: „Ein Bewusstsein für die Umwelt, für den Klimawandel und für die Schützenswürdigkeit unseres Planeten – das ist etwas, das man dort oben sehr eindringlich erlangen kann.“",
         'link': "https://nationalgeographic.de/reise-und-abenteuer/2021/09/der-hohe-preis-des-weltraumtourismus/",
         'date': "02.09.2021",
