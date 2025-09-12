@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleMute(player, buttonElement) {
         if (player.isMuted()) {
             player.unMute();
-            player.setVolume(10);
+            player.setVolume(4);
             buttonElement.innerHTML = volumeUpSvg;
             isGloballyMuted = false;
         } else {
@@ -530,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.log("Meme generated in background, waiting for user to return to Memes category.");
             }
-        }, 60000);
+        }, 1000);
     }
 
     function askForAnotherMemePrompt() {
