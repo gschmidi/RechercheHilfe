@@ -530,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.log("Meme generated in background, waiting for user to return to Memes category.");
             }
-        }, 1000);
+        }, 12000);
     }
 
     function askForAnotherMemePrompt() {
@@ -642,7 +642,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 if (muteBtn) muteBtn.innerHTML = volumeOffSvg;
                             } else {
                                 player.unMute();
-                                player.setVolume(10);
+                                player.setVolume(3);
                                 if (muteBtn) muteBtn.innerHTML = volumeUpSvg;
                             }
                         }
@@ -723,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (firstVideoPlayer.muteButtonElement) firstVideoPlayer.muteButtonElement.innerHTML = volumeOffSvg;
                         } else {
                             firstVideoPlayer.unMute();
-                            firstVideoPlayer.setVolume(10);
+                            firstVideoPlayer.setVolume(3);
                             if (firstVideoPlayer.muteButtonElement) firstVideoPlayer.muteButtonElement.innerHTML = volumeUpSvg;
                         }
                     }
@@ -881,7 +881,7 @@ case 'memes':
                 muteButtonElement.innerHTML = volumeOffSvg;
             } else {
                 event.target.unMute();
-                event.target.setVolume(10);
+                event.target.setVolume(3);
                 muteButtonElement.innerHTML = volumeUpSvg;
             }
         }
