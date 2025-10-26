@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             creating: "Erstelle Memes zum Thema Weltraumtourismus. Dies kann einige Sekunden dauern, sieh dir daher inzwischen die anderen Kategorien dieser Website durch. Du bekommst eine Nachricht, sobald sie fertig sind.",
             creating2: "Erstelle Memes",
 	        askAgain: "Soll ich noch ein Meme erstellen?",
-	        allShown: "Es können keine neuen Memes mehr erstellt werden..."
+	        allShown: ""
         },
         videos: [
             "Suche nach Kurzvideos.",
