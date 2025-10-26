@@ -22,9 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isGloballyMuted = true;
 
+    // allThemesContentData wird jetzt aus einer externen Datei geladen
+    let allThemesContentData = {};
+
     const loadedCategoriesPerTheme = {};
 
-    const currentThemeKey = themeInput.value.toLowerCase();
+    // currentThemeKey wird erst nach dem Laden der Daten initialisiert
+    let currentThemeKey;
 
     // Zustand für die Post-Übersetzung
     let arePostsTranslated = false;
@@ -47,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             searching: "Durchstöbere X (Twitter) nach aktuellen Beiträgen...",
             translating: "Übersetze Beiträge..." // Neue Nachricht für die Übersetzung
         },
-        zeitungsartikel: "Scanne Online-Archive nach relevanten Zeitungsartikeln...",
+        zeitungsartikel: "Scanne Online-Archive nach relevanten Zeitungsartikel...",
         chatbot: "Verbinde mit dem Experten für Weltraumtourismus..."
     };
 
@@ -113,7 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function hideMemeNotification() {
         memeNotification.classList.add('hidden');
         memeNotification.onclick = null;
-    }
+    } // Die überzählige Klammer wurde entfernt.
+
 
     notificationDismiss.addEventListener('click', (event) => {
         event.stopPropagation();
@@ -191,518 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    const allThemesContentData = {
-        "weltraumtourismus": { 
-            memes: [
-  	  {
-                    title: " Der Neid…",
-                    image: "pro-memes/Neid.png"
-                },
-  	  {
-                    title: "Bewertungen in 2050",
-                    image: "pro-memes/Both-bewertunggoogle.png"
-                },
-  	  {
-                    title: "Raketenemoji",
-                    image: "pro-memes/Emoji.png"
-                },
-  	  {
-                    title: "Wifi im All?",
-                    image: "pro-memes/wifi.png"
-                },
-  	  {
-                    title: "Ready for Upgrade?",
-                    image: "pro-memes/Upgrade.png"
-                },
-  	  {
-                    title: "Selfie im All",
-                    image: "pro-memes/Selfie.png"
-                }
-
-            ],
-           videos: [
-                {
-                    title: "Weltraumtourismus: Wem steht der nächste Start ins All bevor?",
-                    embedUrl: "https://www.youtube.com/embed/tiZuKdg-2PA", 
-                    description: "Sajoai"
-                },
-                {
-                    title: "Do You Think Space Tourism is Useless? w/ Brian Cox",
-                    embedUrl: "https://www.youtube.com/embed/E8McWcKL27U", 
-                    description: "spacein1minute"
-                },
-                {
-                    title: "Space Tourism's Impact: Women, Overview Effect, and Beyond!",
-                    embedUrl: "https://www.youtube.com/embed/qEGcbMtT7pI", 
-                    description: "expeditionmoney"
-                },
-                {
-                    title: "The Future of Space Tourism: When Can We Visit Space?",
-                    embedUrl: "https://www.youtube.com/embed/qfJLG71yNsQ", 
-                    description: "CuriosityaboutFacts-07"
-                },
-                {
-                    title: "Song: Earth – Mirage Onmymind",
-                    embedUrl: "https://www.youtube.com/embeded/yXJmMwZqpWQ", 
-                    description: "MirageOnmymind"
-                },
-                {
-                    title: "SpaceX Futuristic Space Hotel – The Ultimate Luxury in Orbit!",
-                    embedUrl: "https://www.youtube.com/embeded/auPScv7qD9Q", 
-                    description: "FuturePulseStation"
-                },
-                {
-                    title: "PropTech Pulse – Ready for a stay that’s truly out of this world?",
-                    embedUrl: "https://www.youtube.com/embeded/JCtijrXnq7g", 
-                    description: "Aurum_PropTech"
-                },
-                {
-                    title: "Inside Virgin Galactic’s first tourist spaceflight",
-                    embedUrl: "https://www.youtube.com/embed/2V4VU8p6Au0", 
-                    description: "SkyNews"
-                },
-                {
-                    title: " Is Space Tourism Possible?",
-                    embedUrl: "https://www.youtube.com/embeded/PFppaKKcRE0", 
-                    description: "Dr. S. Somanath Reveals"
-                },
-                {
-                    title: "Space Tourism: The Ultimate Frontier",
-                    embedUrl: "https://www.youtube.com/embeded/8ty6sD5c6jo", 
-                    description: "-"
-                },
-
-                {
-                    title: "The Rise of Space Tourism!",
-                    embedUrl: " https://www.youtube.com/embeded/nlorIc7y9xg", 
-                    description: "-"
-                },
-
-                {
-                    title: "Space Tourism is Reality in 2026",
-                    embedUrl: "https://www.youtube.com/embeded/CQmZjFMxiO8", 
-                    description: ""
-                },
-
-                {
-                    title: "Inside the Future of Space Tourism:",
-                    embedUrl: "https://www.youtube.com/embeded/Rdu-SrrLvIY", 
-                    description: "-"
-                },
-
-                {
-                    title: "Space Tourism: Your Next Vacation?",
-                    embedUrl: "https://www.youtube.com/embeded/Rhpa_nz1vGs", 
-                    description: "-"
-                },
-
-                {
-                    title: "Space Tourism: Your Ticket to the Stars",
-                    embedUrl: "https://www.youtube.com/embeded/Jcu4HqRH7Sw", 
-                    description: ""
-                },
-
-                {
-                    title: "Space Tourism A New Era Begins with Blue Origin",
-                    embedUrl: "https://www.youtube.com/embeded/LfnqdGcTB80", 
-                    description: ""
-                },
-
-
-                {
-                    title: "WOW! Watch SpaceX Catch A Starship Booster In Air",
-                    embedUrl: "https://www.youtube.com/embeded/tusv2z2aaKE", 
-                    description: ""
-                },
-                {
-                    title: "Rogan Reacts To SpaceX Catching Starship!",
-                    embedUrl: "https://www.youtube.com/embeded/QcA1JgPPogM", 
-                    description: ""
-                },
-                {
-                    title: "Space Tourism 2030: How Soon Can You Visit Space?",
-                    embedUrl: "https://www.youtube.com/embeded/pF8WDInwO6E", 
-                    description: ""
-                },
-
-                {
-                    title: "Space x double booster landing",
-                    embedUrl: "https://www.youtube.com/embeded/WL76wRIYIb8", 
-                    description: ""
-                },
-
-                {
-                    title: "Earth view from space station",
-                    embedUrl: "https://www.youtube.com/embeded/aFqsNbQDbqk", 
-                    description: ""
-                },
-
-                {
-                    title: "NASA astronauts view of Earth during a space walk",
-                    embedUrl: "https://www.youtube.com/embeded/UcPOJP7Qwsk", 
-                    description: ""
-                },
-
-                {
-                    title: "Earth from space Nasa",
-                    embedUrl: "https://www.youtube.com/embeded/WUqtuPo6kaU", 
-                    description: ""
-                },
-
-                {
-                    title: "Astronaut Matthew Dominick Flies Through The International Space Station",
-                    embedUrl: "https://www.youtube.com/embeded/FKsghZt8bLs", 
-                    description: ""
-                },
-
-                {
-                    title: "SpaceX Dragon Departs The ISS",
-                    embedUrl: "https://www.youtube.com/embeded/WD96kSH8pDs", 
-                    description: ""
-                },
-                {
-                    title: " From Space to Everyday Life: The Surprising Origins of Common Inventions!",
-                    embedUrl: "https://www.youtube.com/embeded/k0vQlb7JA-k", 
-                    description: ""
-                },
-
-                {
-                    title: "NASA inventions led to THESE common technologies!",
-                    embedUrl: "https://www.youtube.com/embeded/7G1GUXfSj9E", 
-                    description: ""
-                },
-                {
-                    title: "How Space Technology Became Everyday Life",
-                    embedUrl: "https://www.youtube.com/embeded/XqHjJM1uM1Q", 
-                    description: ""
-                },
-                {
-                    title: "That Came From Space? | Everyday Tools and Technology",
-                    embedUrl: "https://www.youtube.com/embeded/tsgmeHi392w", 
-                    description: ""
-                },
-
-
-                {
-                    title: "What It Feels Like to Spacewalk",
-                    embedUrl: "https://www.youtube.com/embeded/Ji_Um0WYm-w", 
-                    description: ""
-                },
-
-                {
-                    title: "An astronaut stuck in microgravity",
-                    embedUrl: "https://www.youtube.com/embeded/oQSvwmmxbHw", 
-                    description: ""
-                }
-
-
-
-
-
-            ],
-            postings: [
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Tourism for successful people: the world&#39;s first space hotel will open as early as 2027.<br><br>Built by Above: Space Development, it will host 400 guests and 112 crew members on a rotating structure designed to create gravity similar to the moon.<br><br>The hotel will offer a full-service… <a href="https://t.co/A6Nr5VNW0u">pic.twitter.com/A6Nr5VNW0u</a></p>&mdash; Black Hole (@konstructivizm) <a href="https://twitter.com/konstructivizm/status/1936988331499483200?ref_src=twsrc%5Etfw">June 23, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Tourismus für erfolgreiche Menschen: Das erste Weltraumhotel der Welt wird bereits 2027 eröffnet.<br><br>Von Above: Space Development gebaut, wird es 400 Gäste und 112 Besatzungsmitglieder auf einer rotierenden Struktur beherbergen, die eine der Mondgravitation ähnliche Schwerkraft erzeugen soll.<br><br>Das Hotel wird einen Full-Service anbieten… <a href="https://t.co/A6Nr5VNW0u">pic.twitter.com/A6Nr5VNW0u</a></p>&mdash; Black Hole (@konstructivizm) <a href="https://twitter.com/konstructivizm/status/1936988331499483200?ref_src=twsrc%5Etfw">June 23, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Space-Frage des Tages: Warum könnten Stratosphären-Ballons die Zukunft des Weltraumtourismus sein?<br><br>Antwort: Das spanische Unternehmen Eos X Space hat gerade das amerikanische Startup Space Perspective übernommen, um den Stratosphären-Tourismus zu retten. Stratosphären-Ballons… <a href="https://t.co/AYsqgdnJgl">pic.twitter.com/AYsqgdnJgl</a></p>&mdash; space-magazin (@spacemag2025) <a href="https://twitter.com/spacemag2025/status/1950490299794375110?ref_src=twsrc%5Etfw">July 30, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': null // Bereits Deutsch
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Katy Perry says she now looks at Earth through a “whole new perspective” after traveling to space<br><br>She was in space for a total of 11 minutes <a href="https://t.co/3ErSeVJt3d">pic.twitter.com/3ErSeVJt3d</a></p>&mdash; Daily Noud (@DailyNoud) <a href="https://twitter.com/DailyNoud/status/1911819148755149176?ref_src=twsrc%5Etfw">April 14, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Katy Perry sagt, sie blicke nun nach einer Reise ins All mit einer „ganz neuen Perspektive“ auf die Erde.<br><br>Sie war insgesamt 11 Minuten im All <a href="https://t.co/3ErSeVJt3d">pic.twitter.com/3ErSeVJt3d</a></p>&mdash; Daily Noud (@DailyNoud) <a href="https://twitter.com/DailyNoud/status/1911819148755149176?ref_src=twsrc%5Etfw">April 14, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space Perspective wants to take tourists on balloon rides to the stratosphere <a href="https://t.co/PReUPCdL6X">https://t.co/PReUPCdL6X</a> <a href="https://t.co/i9ffRuGysD">pic.twitter.com/i9ffRuGysD</a></p>— SPACE.com (@SPACEdotcom) <a href="https://twitter.com/SPACEdotcom/status/1273725686654488576?ref_src=twsrc%5Etfw">June 18, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Space Perspective möchte Touristen mit Ballonfahrten in die Stratosphäre bringen <a href="https://t.co/PReUPCdL6X">https://t.co/PReUPCdL6X</a> <a href="https://t.co/i9ffRuGysD">pic.twitter.com/i9ffRuGysD</a></p>&mdash; SPACE.com (@SPACEdotcom) <a href="https://twitter.com/SPACEdotcom/status/1273725686654488576?ref_src=twsrc%5Etfw">June 18, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">NASA releases even more of its fantastical space tourism posters <a href="https://t.co/h7X1e8w21k">https://t.co/h7X1e8w21k</a> <a href="https://t.co/6Q5Kl8ciSt">pic.twitter.com/6Q5Kl8ciSt</a></p>&mdash; Verge Video (@VergeVideo) <a href="https://twitter.com/VergeVideo/status/697400889921839105?ref_src=twsrc%5Etfw">February 10, 2016</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">NASA veröffentlicht noch mehr ihrer fantastischen Weltraumtourismus-Poster <a href="https://t.co/h7X1e8w21k">https://t.co/h7X1e8w21k</a> <a href="https://t.co/6Q5Kl8ciSt">pic.twitter.com/6Q5Kl8ciSt</a></p>&mdash; Verge Video (@VergeVideo) <a href="https://twitter.com/VergeVideo/status/697400889921839105?ref_src=twsrc%5Etfw">February 10, 2016</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Astronauts aboard the International <a href="https://twitter.com/Space_Station?ref_src=twsrc%5Etfw">@Space_Station</a> have free time that they can spend as they choose. One of the most popular activities is simply looking down at the Earth, soaking up rare and spectacular views from above. <a href="https://t.co/kBaGxpb1V1">pic.twitter.com/kBaGxpb1V1</a></p>&mdash; Planetary Society (@exploreplanets) <a href="https://twitter.com/exploreplanets/status/1438900959950766080?ref_src=twsrc%5Etfw">September 17, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Astronauten an Bord der Internationalen <a href="https://twitter.com/Space_Station?ref_src=twsrc%5Etfw">@Space_Station</a> haben Freizeit, die sie nach Belieben verbringen können. Eine der beliebtesten Aktivitäten ist es, einfach auf die Erde herabzublicken und die seltenen und spektakulären Ausblicke von oben zu genießen. <a href="https://t.co/kBaGxpb1V1">pic.twitter.com/kBaGxpb1V1</a></p>&mdash; Planetary Society (@exploreplanets) <a href="https://twitter.com/exploreplanets/status/1438900959950766080?ref_src=twsrc%5Etfw">September 17, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">🚀 The Rise of Space Tourism with SpaceX 🌍✨<br><br>SpaceX is revolutionizing space travel, making it more accessible for civilians!🌟<br><br> Here’s how:<br><br>🛰️ Crew Dragon & Private Missions – SpaceX’s Dragon capsule has already taken private citizens to orbit, including the Inspiration4…</p>&mdash; Epic_zooner Buchi_Hyper (@epic_zooner) <a href="https://twitter.com/epic_zooner/status/1897925645453107674?ref_src=twsrc%5Etfw">March 7, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">🚀 Der Aufstieg des Weltraumtourismus mit SpaceX 🌍✨<br><br>SpaceX revolutioniert die Raumfahrt und macht sie für Zivilisten zugänglicher!🌟<br><br> So geht’s:<br><br>🛰️ Crew Dragon & Private Missionen – Die Dragon-Kapsel von SpaceX hat bereits Privatpersonen in den Orbit gebracht, darunter die Inspiration4… <a href="https://twitter.com/epic_zooner/status/1897925645453107674?ref_src=twsrc%5Etfw">March 7, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space tourism is now accessible to private citizens, opening a new era of exploration. <a href="https://twitter.com/hashtag/SpaceTourism?src=hash&ref_src=twsrc%5Etfw">#SpaceTourism</a> <a href="https://twitter.com/hashtag/NewFrontier?src=hash&ref_src=twsrc%5Etfw">#NewFrontier</a><br>Global carbon emissions have decreased due to widespread adoption of green technologies. <a href="https://twitter.com/hashtag/ClimateAction?src=hash&ref_src=twsrc%5Etfw">#ClimateAction</a> <a href="https://twitter.com/hashtag/GreenTech?src=hash&ref_src=twsrc%5Etfw">#GreenTech</a></p>&mdash; Liu Luz (@LiuLuz581593) <a href="https://twitter.com/LiuLuz581593/status/1949495160095830164?ref_src=twsrc%5Etfw">July 27, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Weltraumtourismus ist jetzt für Privatpersonen zugänglich und eröffnet eine neue Ära der Erkundung. <a href="https://twitter.com/hashtag/SpaceTourism?src=hash&ref_src=twsrc%5Etfw">#Weltraumtourismus</a> <a href="https://twitter.com/hashtag/NewFrontier?src=hash&ref_src=twsrc%5Etfw">#NeueGrenze</a><br>Die globalen Kohlenstoffemissionen sind aufgrund der weit verbreiteten Einführung grüner Technologien zurückgegangen. <a href="https://twitter.com/hashtag/ClimateAction?src=hash&ref_src=twsrc%5Etfw">#Klimaschutz</a> <a href="https://twitter.com/hashtag/GreenTech?src=hash&ref_src=twsrc%5Etfw">#GrüneTechnologie</a></p>&mdash; Liu Luz (@LiuLuz581593) <a href="https://twitter.com/LiuLuz581593/status/1949495160095830164?ref_src=twsrc%5Etfw">July 27, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">„Dann geht der Weltraumtourismus richtig los“ <a href="https://t.co/AJ0xZpzHO">https://t.co/AJ0xZpzHO</a> <a href="https://t.co/jpG8VPXnhF">pic.twitter.com/jpG8VPXnhF</a></p>&mdash; WELT (@welt) <a href="https://twitter.com/welt/status/1828344605751857646?ref_src=twsrc%5Etfw">August 27, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': null // Bereits Deutsch
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">This will create more billionaires than the internet boom:<br><br>2010: $50,000 to send 1kg to space<br>2024: $100<br>Soon: $10<br><br>But everyone&#39;s focused on the wrong thing.<br><br>The real opportunity isn&#39;t in launches - it&#39;s in what comes after: <a href="https://t.co/8cFc4s0izA">pic.twitter.com/8cFc4s0izA</a></p>&mdash; GC Cooke (@GCcookeHQ) <a href="https://twitter.com/GCcookeHQ/status/1862542111012528257?ref_src=twsrc%5Etfw">November 29, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Das wird mehr Milliardäre hervorbringen als der Internet-Boom:<br><br>2010: 50.000 $ um 1kg ins All zu schicken<br>2024: 100 $<br>Bald: 10 $<br><br>Aber alle konzentrieren sich auf das Falsche.<br><br>Die eigentliche Chance liegt nicht in den Starts – sondern in dem, was danach kommt: <a href="https://t.co/8cFc4s0izA">pic.twitter.com/8cFc4s0izA</a></p>&mdash; GC Cooke (@GCcookeHQ) <a href="https://twitter.com/GCcookeHQ/status/1862542111012528257?ref_src=twsrc%5Etfw">November 29, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">NASA is opening up the International Space Station to tourism and other business ventures starting next year.<br><br>A night in space is priced at $35K. <a href="https://t.co/7rnm7Aux4C">pic.twitter.com/7rnm7Aux4C</a></p>&mdash; AJ+ (@ajplus) <a href="https://twitter.com/ajplus/status/1137059185034747906?ref_src=twsrc%5Etfw">June 7, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Die NASA öffnet die Internationale Raumstation ab nächstem Jahr für Tourismus und andere Geschäftsvorhaben.<br><br>Eine Nacht im All kostet 35.000 $. <a href="https://t.co/7rnm7Aux4C">pic.twitter.com/7rnm7Aux4C</a></p>&mdash; AJ+ (@ajplus) <a href="https://twitter.com/ajplus/status/1137059185034747906?ref_src=twsrc%5Etfw">June 7, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">„Der Weltraumtourismus ist in greifbarer Nähe – die Preise werden sehr stark fallen“ <a href="https://t.co/R88oOwqMWz">https://t.co/R88oOwqMWz</a> <a href="https://t.co/FbUuFSbfW4">pic.twitter.com/FbUuFSbfW4</a></p>&mdash; WELT (@welt) <a href="https://twitter.com/welt/status/1835590831698280585?ref_src=twsrc%5Etfw">September 16, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': null // Bereits Deutsch
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Top 5 Dinge, auf die sich der Männerclub im Alter freut!<br><br>1. Full Dive: Virtuelle Realität in richtig Lachsmann<br>2. Nachwuchs aufwachsen sehen<br>3. Fortschritte in der Lebensmitteltechnik<br>4. Weltraumtourismus<br>5. Weisheit erlangen KEKW<br><br>Was denkt ihr?<br><br>Heute 13 Uhr - Neue Top5! <a href="https://t.co/X09D8OVZ3">pic.twitter.com/X09D8OVZ3</a></p>&mdash; Lachsmann (@Lachsmann_) <a href="https://twitter.com/Lachsmann_/status/1743198387288068153?ref_src=twsrc%5Etfw">January 5, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': null // Bereits Deutsch
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">In den letzten Jahren haben die Vereinigten Arabischen Emirate wichtige Schritte im Bereich Weltraum und Weltraumtourismus unternommen. Berichten zufolge plant das Land, Interessierten Raumfahrt zu ermöglichen, indem es im nächsten Jahr Raumflüge startet. Die Kosten für solche… <a href="https://t.co/M708gxISsP">pic.twitter.com/M708gxISsP</a></p>&mdash; Nachrichten (@NewsFokus) <a href="https://twitter.com/NewsFokus/status/1876982233925374027?ref_src=twsrc%5Etfw">January 8, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': null // Bereits Deutsch
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Das amerikanische Raumfahrt-Unternehmen <a href="https://twitter.com/virgingalactic?ref_src=twsrc%5Etfw">@virgingalactic</a> schlägt ein neues Kapital auf. Heute beginnt um 17 Uhr deutscher Zeit die Ära des Weltraumtourismus. Unser <a href="https://twitter.com/hashtag/BilddesTages?src=hash&amp;ref_src=twsrc%5Etfw">#BilddesTages</a> zeigt die &quot;Unity&quot; bei einem Testflug. <a href="https://twitter.com/hashtag/VirginGalactic?src=hash&amp;ref_src=twsrc%5Etfw">#VirginGalactic</a> <a href="https://twitter.com/hashtag/Spacetourism?src=hash&amp;ref_src=twsrc%5Etfw">#Spacetourism</a><a href="https://t.co/6WsnmbMnzy">https://t.co/6WsnmbMnzy</a> <a href="https://t.co/htYtWLNAYd">pic.twitter.com/htYtWLNAYd</a></p>&mdash; marktEINBLICKE (@markteinblicke) <a href="https://twitter.com/markteinblicke/status/1674310837182365696?ref_src=twsrc%5Etfw">June 29, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': null // Bereits Deutsch
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Drei Österreicher arbeiten daran, wie Menschen in Zukunft im All leben können – zumindest zeitweise. Hier sprechen sie über Tische mit Klettverschluss, Privatsphäre auf kleinstem Raum und Weltraumtourismus für jedermann.<a href="https://t.co/ByN3MTFCUr">https://t.co/ByN3MTFCUr</a></p>&mdash; DER SPIEGEL (@derspiegel) <a href="https://twitter.com/derspiegel/status/1917997966402466174?ref_src=twsrc%5Etfw">May 1, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': null // Bereits Deutsch
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Der Weltraumtourismus wird Realität: Die Mission Polaris Dawn wird den ersten Weltraumspaziergang eines Privatmanns ermöglichen <a href="https://t.co/1PLdHtR81W">https://t.co/1PLdHtR81W</a> <a href="https://t.co/bzt0lQIgFP">pic.twitter.com/bzt0lQIgFP</a></p>&mdash; gagadget Deutsch (@gagadget_de) <a href="https://twitter.com/gagadget_de/status/1833845217306562636?ref_src=twsrc%5Etfw">September 11, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': null // Bereits Deutsch
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Elon Musk und Jeff Bezos wollen Reisen in den Weltraum für jedermann ermöglichen. Doch wann ist es soweit? Physiker Ulrich Walter sagt: Schneller als Sie denken. <a href="https://t.co/9wvX9fwKmV">https://t.co/9wvX9fwKmV</a></p>&mdash; DER SPIEGEL (@derspiegel) <a href="https://twitter.com/derspiegel/status/1656393230911696897?ref_src=twsrc%5Etfw">May 10, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': null // Bereits Deutsch
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">HOT INDUSTRIES OF 2035<br><br>1. Non von Neumann Computers: Neuromorphic &amp; QC-as-coprocessor<br>2. Space Tourism<br>3. CRISPR-Based Therapies<br>4. Metaverse (Don&#39;t roll your eyes. I see you.)<br>5. Mainstream Vertical Farming<br>6. Large scale Autonomous Drone Delivery &amp; Urban Aerial Mobility<br>7.…</p>&mdash; Amir Husain (@amirhusain_tx) <a href="https://twitter.com/amirhusain_tx/status/1956371855511888074?ref_src=twsrc%5Etfw">August 15, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">HEISSE INDUSTRIEN VON 2035<br><br>1. Non-von-Neumann-Computer: Neuromorphe &amp; QC-als-Koprozessor<br>2. Weltraumtourismus<br>3. CRISPR-basierte Therapien<br>4. Metaverse (Verdreh nicht die Augen. Ich sehe dich.)<br>5. Mainstream Vertical Farming<br>6. Groß angelegte autonome Drohnenlieferung &amp; urbane Luftmobilität<br>7. … <a href="https://twitter.com/amirhusain_tx/status/1956371855511888074?ref_src=twsrc%5Etfw">August 15, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/hashtag/SERASpace?src=hash&amp;ref_src=twsrc%5Etfw">#SERASpace</a> <br>Space tourism isn’t the enemy of science.<br><br>For decades, we’ve relied on government-funded missions with limited launch cadence. The result? Incredible achievements, yes — but slow progress.<br><br>Here’s the truth: without more people flying, costs will never come down.… <a href="https://t.co/XYLkaCC1FQ">pic.twitter.com/XYLkaCC1FQ</a></p>&mdash; Keith “Code” Yohn 🚀💫 (@keiffer6) <a href="https://twitter.com/keiffer6/status/1960009448014905719?ref_src=twsrc%5Etfw">August 25, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr"><a href="https://twitter.com/hashtag/SERASpace?src=hash&amp;ref_src=twsrc%5Etfw">#SERASpace</a> <br>Weltraumtourismus ist nicht der Feind der Wissenschaft.<br><br>Seit Jahrzehnten verlassen wir uns auf staatlich finanzierte Missionen mit begrenzter Startfrequenz. Das Ergebnis? Unglaubliche Errungenschaften, ja – aber langsamer Fortschritt.<br><br>Hier ist die Wahrheit: Ohne mehr Menschen, die fliegen, werden die Kosten niemals sinken… <a href="https://t.co/XYLkaCC1FQ">pic.twitter.com/XYLkaCC1FQ</a></p>&mdash; Keith “Code” Yohn 🚀💫 (@keiffer6) <a href="https://twitter.com/keiffer6/status/1960009448014905719?ref_src=twsrc%5Etfw">August 25, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space Tourism a major economic factor already!<br><br>Did you know that space tourism generated nearly $874 million in revenue for the USA in 2024 alone? <br><br>Let&#39;s break it down.<br><br>First, income from actual space flights, like those from Virgin Galactic and Blue Origin, raked in about… <a href="https://t.co/cOpp7SOOOS">pic.twitter.com/cOpp7SOOOS</a></p>&mdash; KiwiThinker (@KiwiThinker) <a href="https://twitter.com/KiwiThinker/status/1956243458693456149?ref_src=twsrc%5Etfw">August 15, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Weltraumtourismus schon jetzt ein wichtiger Wirtschaftsfaktor!<br><br>Wusstest du, dass der Weltraumtourismus allein im Jahr 2024 fast 874 Millionen Dollar Umsatz für die USA generiert hat?<br><br>Lasst uns das aufschlüsseln.<br><br>Erstens, Einnahmen aus tatsächlichen Raumflügen, wie denen von Virgin Galactic und Blue Origin, brachten etwa… <a href="https://t.co/cOpp7SOOOS">pic.twitter.com/cOpp7SOOOS</a></p>&mdash; KiwiThinker (@KiwiThinker) <a href="https://twitter.com/KiwiThinker/status/1956243458693456149?ref_src=twsrc%5Etfw">August 15, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Da schlägt das Herz des Thermodynamikers aus zwei Gründen höher<br><br>1. In der Raumfahrt ist nichts mit &quot;All Electric World&quot; - da werden auch in Zukunft Turbomaschinen und Brennstoffe gebraucht.<br><br>2. Mit H2 aus Wind, Sonne, Kernenergie kann man klimaneutralen Weltraumtourismus machen <a href="https://t.co/jLZQmidbUN">pic.twitter.com/jLZQmidbUN</a></p>&mdash; André D. Thess (@AndreThess) <a href="https://twitter.com/AndreThess/status/1725482961833709951?ref_src=twsrc%5Etfw">November 17, 2023</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': null // Bereits Deutsch
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Never accept the fatuous claim that space exploration is to “escape Earth.”<br><br>The goals are scientific R&amp;D, commercial activity, technological innovation, frontier exploration, and human expansion.<br><br>Space exploration is to widen the pie, not throw away the half-eaten scraps. <a href="https://t.co/lcGwBXPd4c">pic.twitter.com/lcGwBXPd4c</a></p>&mdash; A. Pettit (@PettitFrontier) <a href="https://twitter.com/PettitFrontier/status/1883281138892075105?ref_src=twsrc%5Etfw">January 25, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Akzeptiere niemals die törichte Behauptung, dass die Weltraumforschung dazu dient, „der Erde zu entfliehen.“<br><br>Die Ziele sind wissenschaftliche Forschung und Entwicklung, kommerzielle Aktivitäten, technologische Innovation, Grenzerkundung und menschliche Expansion.<br><br>Die Weltraumforschung soll den Kuchen vergrößern, nicht die halb gegessenen Reste wegwerfen. <a href="https://t.co/lcGwBXPd4c">pic.twitter.com/lcGwBXPd4c</a></p>&mdash; A. Pettit (@PettitFrontier) <a href="https://twitter.com/PettitFrontier/status/1883281138892075105?ref_src=twsrc%5Etfw">January 25, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">I&#39;m pretty optimistic about humanity’s future in space exploration, especially with help from AI and robotics. IMO, at least hundreds of thousands of people will be able to take selfies on the Moon with Earth in the background before 2050. <a href="https://t.co/5pmxfVvVTw">https://t.co/5pmxfVvVTw</a></p>&mdash; Tuo Liu (@Robo_Tuo) <a href="https://twitter.com/Robo_Tuo/status/1979344752698098101?ref_src=twsrc%5Etfw">October 18, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Ich bin ziemlich optimistisch, was die Zukunft der Menschheit in der Weltraumforschung angeht, besonders mit Hilfe von KI und Robotik. Meiner Meinung nach werden bis 2050 mindestens Hunderttausende von Menschen Selfies auf dem Mond mit der Erde im Hintergrund machen können. <a href="https://t.co/5pmxfVvVTw">https://t.co/5pmxfVvVTw</a></p>&mdash; Tuo Liu (@Robo_Tuo) <a href="https://twitter.com/Robo_Tuo/status/1979344752698098101?ref_src=twsrc%5Etfw">October 18, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The Rise of Reusable Rockets 🚀♻️<br><br>Fast forward to today, and reusable rocket technology is revolutionizing space access. Companies like SpaceX have drastically cut launch costs, making space more accessible for scientific research, commercial ventures, and future exploration.… <a href="https://t.co/x93LJgYV2">pic.twitter.com/x93LJgYV2</a></p>&mdash; 🇮🇳 Cool Breeze 🇮🇳 (@samthinkz) <a href="https://twitter.com/samthinkz/status/1979097631109394882?ref_src=twsrc%5Etfw">October 17, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">🚀 Der Aufstieg wiederverwendbarer Raketen 🚀♻️<br><br>Spulen wir vor bis heute: Die Technologie wiederverwendbarer Raketen revolutioniert den Zugang zum Weltraum. Unternehmen wie SpaceX haben die Startkosten drastisch gesenkt und den Weltraum für wissenschaftliche Forschung, kommerzielle Unternehmungen und zukünftige Erkundungen zugänglicher gemacht… <a href="https://t.co/x93LJgYV2">pic.twitter.com/x93LJgYV2</a></p>&mdash; 🇮🇳 Cool Breeze 🇮🇳 (@samthinkz) <a href="https://twitter.com/samthinkz/status/1979097631109394882?ref_src=twsrc%5Etfw">October 17, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Can we start buying land now ? <br><br>Humanity could settle Mars by 2055, Elon Musk says <a href="https://t.co/JgHgDJfXwv">https://t.co/JgHgDJfXwv</a></p>&mdash; Make L.A. Great Again 🇺🇸 (@lalovestrump) <a href="https://twitter.com/lalovestrump/status/1979259080851231114?ref_src=twsrc%5Etfw">October 17, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Können wir jetzt schon Land kaufen ? <br><br>Die Menschheit könnte den Mars bis 2055 besiedeln, sagt Elon Musk <a href="https://t.co/JgHgDJfXwv">https://t.co/JgHgDJfXwv</a></p>&mdash; Make L.A. Great Again 🇺🇸 (@lalovestrump) <a href="https://twitter.com/lalovestrump/status/1979259080851231114?ref_src=twsrc%5Etfw">October 17, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Very inspiring photos of the XXI century Space exploration. <a href="https://twitter.com/SpaceX?ref_src=twsrc%5Etfw">@SpaceX</a> leads the way up to the stars! <a href="https://t.co/0E8q5ekTEH">https://t.co/0E8q5ekTEH</a></p>&mdash; devnulll (@devnullll) <a href="https://twitter.com/devnullll/status/1979290237902663999?ref_src=twsrc%5Etfw">October 17, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Sehr inspirierende Fotos der XXI Jahrhunderts Weltraumforschung. <a href="https://twitter.com/SpaceX?ref_src=twsrc%5Etfw">@SpaceX</a> weist den Weg zu den Sternen! <a href="https://t.co/0E8q5ekTEH">https://t.co/0E8q5ekTEH</a></p>&mdash; devnulll (@devnullll) <a href="https://twitter.com/devnullll/status/1979290237902663999?ref_src=twsrc%5Etfw">October 17, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">SpaceX Polaris mission gave us incredible memories. SpaceX has made space exploration achievable and humanity should work to go beyond Earth, explore the Universe and colonize other planets. It’s an exciting journey that’s worth every effort, pushing the limits of what’s possible <a href="https://t.co/IC7BOMSwRS">pic.twitter.com/IC7BOMSwRS</a></p>&mdash; Dima Zeniuk (@DimaZeniuk) <a href="https://twitter.com/DimaZeniuk/status/1835738890839212519?ref_src=twsrc%5Etfw">September 16, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Die SpaceX Polaris Mission bescherte uns unglaubliche Erinnerungen. SpaceX hat die Weltraumforschung erreichbar gemacht, und die Menschheit sollte daran arbeiten, über die Erde hinauszugehen, das Universum zu erkunden und andere Planeten zu besiedeln. Es ist eine aufregende Reise, die jede Anstrengung wert ist und die Grenzen des Möglichen verschiebt <a href="https://t.co/IC7BOMSwRS">pic.twitter.com/IC7BOMSwRS</a></p>&mdash; Dima Zeniuk (@DimaZeniuk) <a href="https://twitter.com/DimaZeniuk/status/1835738890839212519?ref_src=twsrc%5Etfw">September 16, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The reusable rocket in summary:<br><br>Author in the photo <a href="https://t.co/gkFJAFmPRW">pic.twitter.com/gkFJAFmPRW</a></p>&mdash; Déborah (@dvorahfr) <a href="https://twitter.com/dvorahfr/status/1791676953822404738?ref_src=twsrc%5Etfw">May 18, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Die wiederverwendbare Rakete in Kurzform:<br><br>Autor auf dem Foto <a href="https://t.co/gkFJAFmPRW">pic.twitter.com/gkFJAFmPRW</a></p>&mdash; Déborah (@dvorahfr) <a href="https://twitter.com/dvorahfr/status/1791676953822404738?ref_src=twsrc%5Etfw">May 18, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">HISTORIC. We have reusable orbital rockets everyone. <a href="https://twitter.com/hashtag/SpaceX?src=hash&amp;ref_src=twsrc%5Etfw">#SpaceX</a> <a href="https://t.co/mpTTjgdxxF">pic.twitter.com/mpTTjgdxxF</a></p>&mdash; Emily Calandrelli (@TheSpaceGal) <a href="https://twitter.com/TheSpaceGal/status/847578444284051457?ref_src=twsrc%5Etfw">March 30, 2017</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">HISTORISCH. Wir haben wiederverwendbare Orbitalraketen, Leute. <a href="https://twitter.com/hashtag/SpaceX?src=hash&amp;ref_src=twsrc%5Etfw">#SpaceX</a> <a href="https://t.co/mpTTjgdxxF">pic.twitter.com/mpTTjgdxxF</a></p>&mdash; Emily Calandrelli (@TheSpaceGal) <a href="https://twitter.com/TheSpaceGal/status/847578444284051457?ref_src=twsrc%5Etfw">March 30, 2017</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">SpaceX now has a fully reusable rocket...<br><br>Super Heavy Booster 12 Catch! <a href="https://t.co/0PchK6rqf9">pic.twitter.com/0PchK6rqf9</a></p>&mdash; S.E. Robinson, Jr. (@SERobinsonJr) <a href="https://twitter.com/SERobinsonJr/status/1845459996827341303?ref_src=twsrc%5Etfw">October 13, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">SpaceX hat jetzt eine vollständig wiederverwendbare Rakete...<br><br>Super Heavy Booster 12 Catch! <a href="https://t.co/0PchK6rqf9">pic.twitter.com/0PchK6rqf9</a></p>&mdash; S.E. Robinson, Jr. (@SERobinsonJr) <a href="https://twitter.com/SERobinsonJr/status/1845459996827341303?ref_src=twsrc%5Etfw">October 13, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The largest rocket ever made is fully reuseable and already has a launch rate faster than any other rocket of its size and I feel like nobody is talking about it. <a href="https://t.co/AEeeRq8V5H">pic.twitter.com/AEeeRq8V5H</a></p>&mdash; Luke Leisher (@luke_leisher_) <a href="https://twitter.com/luke_leisher_/status/1854615278572781640?ref_src=twsrc%5Etfw">November 7, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Die größte jemals gebaute Rakete ist vollständig wiederverwendbar und hat bereits eine schnellere Startrate als jede andere Rakete ihrer Größe, und ich habe das Gefühl, niemand spricht darüber. <a href="https://t.co/AEeeRq8V5H">pic.twitter.com/AEeeRq8V5H</a></p>&mdash; Luke Leisher (@luke_leisher_) <a href="https://twitter.com/luke_leisher_/status/1854615278572781640?ref_src=twsrc%5Etfw">November 7, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space Station <a href="https://t.co/UbAqyc98aa">pic.twitter.com/UbAqyc98aa</a></p>&mdash; Margoose 🇦🇺 (@Margoose5171) <a href="https://twitter.com/Margoose5171/status/1976164297983262908?ref_src=twsrc%5Etfw">October 9, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Raumstation <a href="https://t.co/UbAqyc98aa">pic.twitter.com/UbAqyc98aa</a></p>&mdash; Margoose 🇦🇺 (@Margoose5171) <a href="https://twitter.com/Margoose5171/status/1976164297983262908?ref_src=twsrc%5Etfw">October 9, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space Station <a href="https://twitter.com/hashtag/aiart?src=hash&amp;ref_src=twsrc%5Etfw">#aiart</a> <a href="https://twitter.com/hashtag/ai?src=hash&amp;ref_src=twsrc%5Etfw">#ai</a> <a href="https://twitter.com/hashtag/aidesign?src=hash&amp;ref_src=twsrc%5Etfw">#aidesign</a> <a href="https://twitter.com/hashtag/spaceexploration?src=hash&amp;ref_src=twsrc%5Etfw">#spaceexploration</a> <a href="https://twitter.com/hashtag/spacex?src=hash&amp;ref_src=twsrc%5Etfw">#spacex</a> <a href="https://twitter.com/hashtag/elonmusk?src=hash&amp;ref_src=twsrc%5Etfw">#elonmusk</a> <a href="https://twitter.com/hashtag/spacestation?src=hash&amp;ref_src=twsrc%5Etfw">#spacestation</a> <a href="https://twitter.com/hashtag/spaceship?src=hash&amp;ref_src=twsrc%5Etfw">#spaceship</a> <a href="https://twitter.com/hashtag/scifi?src=hash&amp;ref_src=twsrc%5Etfw">#scifi</a> <a href="https://t.co/Tn4zyIonQd">pic.twitter.com/Tn4zyIonQd</a></p>&mdash; Manjik Pictures (@ManjikPictures) <a href="https://twitter.com/ManjikPictures/status/1979513466445795642?ref_src=twsrc%5Etfw">October 18, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Raumstation <a href="https://twitter.com/hashtag/aiart?src=hash&amp;ref_src=twsrc%5Etfw">#KIkunst</a> <a href="https://twitter.com/hashtag/ai?src=hash&amp;ref_src=twsrc%5Etfw">#KI</a> <a href="https://twitter.com/hashtag/aidesign?src=hash&amp;ref_src=twsrc%5Etfw">#KIdesign</a> <a href="https://twitter.com/hashtag/spaceexploration?src=hash&amp;ref_src=twsrc%5Etfw">#Weltraumforschung</a> <a href="https://twitter.com/hashtag/spacex?src=hash&amp;ref_src=twsrc%5Etfw">#SpaceX</a> <a href="https://twitter.com/hashtag/elonmusk?src=hash&amp;ref_src=twsrc%5Etfw">#ElonMusk</a> <a href="https://twitter.com/hashtag/spacestation?src=hash&amp;ref_src=twsrc%5Etfw">#Raumstation</a> <a href="https://twitter.com/hashtag/spaceship?src=hash&amp;ref_src=twsrc%5Etfw">#Raumschiff</a> <a href="https://twitter.com/hashtag/scifi?src=hash&amp;ref_src=twsrc%5Etfw">#ScienceFiction</a> <a href="https://t.co/Tn4zyIonQd">pic.twitter.com/Tn4zyIonQd</a></p>&mdash; Manjik Pictures (@ManjikPictures) <a href="https://twitter.com/ManjikPictures/status/1979513466445795642?ref_src=twsrc%5Etfw">October 18, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">moon base was fine. the tub, the books, the view – but the silence grew loud. <a href="https://t.co/QN4wG6nsUq">pic.twitter.com/QN4wG6nsUq</a></p>&mdash; Synthetic_soul (@Synthetic_Copy) <a href="https://twitter.com/Synthetic_Copy/status/1868861599093866725?ref_src=twsrc%5Etfw">December 17, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Mondbasis war gut. Die Wanne, die Bücher, die Aussicht – aber die Stille wurde laut. <a href="https://t.co/QN4wG6nsUq">pic.twitter.com/QN4wG6nsUq</a></p>&mdash; Synthetic_soul (@Synthetic_Copy) <a href="https://twitter.com/Synthetic_Copy/status/1868861599093866725?ref_src=twsrc%5Etfw">December 17, 2024</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Do YOU want to go to Space? <a href="https://twitter.com/hashtag/SERASpace?src=hash&amp;ref_src=twsrc%5Etfw">#SERASpace</a> in conjunction with <a href="https://twitter.com/ton_blockchain?ref_src=twsrc%5Etfw">@ton_blockchain</a> is GIVING AWAY flights for 6 new astronauts.<br><br>Join <a href="https://twitter.com/seraspaceage?ref_src=twsrc%5Etfw">@seraspaceage</a> on Telegram to join the competition! Join here: <a href="https://t.co/PVLwqLQcbc">https://t.co/PVLwqLQcbc</a> <a href="https://t.co/SbEo28CgEq">pic.twitter.com/SbEo28CgEq</a></p>&mdash; Mike Mongo 💎🐐 (@MikeMongo) <a href="https://twitter.com/MikeMongo/status/1979204695441678635?ref_src=twsrc%5Etfw">October 17, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Möchtest DU ins All? <a href="https://twitter.com/hashtag/SERASpace?src=hash&amp;ref_src=twsrc%5Etfw">#SERASpace</a> in Zusammenarbeit mit <a href="https://twitter.com/ton_blockchain?ref_src=twsrc%5Etfw">@ton_blockchain</a> verlost Flüge für 6 neue Astronauten.<br><br>Trete <a href="https://twitter.com/seraspaceage?ref_src=twsrc%5Etfw">@seraspaceage</a> auf Telegram bei, um am Wettbewerb teilzunehmen! Hier beitreten: <a href="https://t.co/PVLwqLQcbc">https://t.co/PVLwqLQcbc</a> <a href="https://t.co/SbEo28CgEq">pic.twitter.com/SbEo28CgEq</a></p>&mdash; Mike Mongo 💎🐐 (@MikeMongo) <a href="https://twitter.com/MikeMongo/status/1979204695441678635?ref_src=twsrc%5Etfw">October 17, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The Milky Way seen from 261 miles above Earth, captured by astronauts aboard the ISS as it passed over southern Iran. <a href="https://t.co/K9qQyX2DBv">pic.twitter.com/K9qQyX2DBv</a></p>&mdash; astrophilesz (@astrophilesz) <a href="https://twitter.com/astrophilesz/status/1978706927950365121?ref_src=twsrc%5Etfw">October 16, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Die Milchstraße, 261 Meilen über der Erde gesehen, aufgenommen von Astronauten an Bord der ISS, als sie über den südlichen Iran flog. <a href="https://t.co/K9qQyX2DBv">pic.twitter.com/K9qQyX2DBv</a></p>&mdash; astrophilesz (@astrophilesz) <a href="https://twitter.com/astrophilesz/status/1978706927950365121?ref_src=twsrc%5Etfw">October 16, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space isn’t just for career astronauts. It’s for citizens with a mission, a message, and a heart to serve. <a href="https://twitter.com/hashtag/SERASpace?src=hash&amp;ref_src=twsrc%5Etfw">#SERASpace</a> <a href="https://twitter.com/hashtag/blueorigin?src=hash&amp;ref_src=twsrc%5Etfw">#blueorigin</a> <a href="https://twitter.com/hashtag/CitizenAstronaut?src=hash&amp;ref_src=twsrc%5Etfw">#CitizenAstronaut</a> <a href="https://twitter.com/hashtag/SpaceExploration?src=hash&amp;ref_src=twsrc%5Etfw">#SpaceExploration</a> <a href="https://t.co/CCFDbd32Uq">pic.twitter.com/CCFDbd32Uq</a></p>&mdash; Mario Espinosa (@MarioEspinosa_1) <a href="https://twitter.com/MarioEspinosa_1/status/1977919531424035119?ref_src=twsrc%5Etfw">October 14, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Der Weltraum ist nicht nur für Berufsastronauten. Er ist für Bürger mit einer Mission, einer Botschaft und einem Herzen, um zu dienen. <a href="https://twitter.com/hashtag/SERASpace?src=hash&amp;ref_src=twsrc%5Etfw">#SERASpace</a> <a href="https://twitter.com/hashtag/blueorigin?src=hash&amp;ref_src=twsrc%5Etfw">#blueorigin</a> <a href="https://twitter.com/hashtag/CitizenAstronaut?src=hash&amp;ref_src=twsrc%5Etfw">#Bürgerastronaut</a> <a href="https://twitter.com/hashtag/SpaceExploration?src=hash&amp;ref_src=twsrc%5Etfw">#Weltraumforschung</a> <a href="https://t.co/CCFDbd32Uq">pic.twitter.com/CCFDbd32Uq</a></p>&mdash; Mario Espinosa (@MarioEspinosa_1) <a href="https://twitter.com/MarioEspinosa_1/status/1977919531424035119?ref_src=twsrc%5Etfw">October 14, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The sunset line between day and night as seen from Space... <a href="https://t.co/YI6JOtNpS1">pic.twitter.com/YI6JOtNpS1</a></p>&mdash; Earth (@earthcurated) <a href="https://twitter.com/earthcurated/status/1899046401989914653?ref_src=twsrc%5Etfw">March 10, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Die Sonnenuntergangslinie zwischen Tag und Nacht, vom Weltraum aus gesehen... <a href="https://t.co/YI6JOtNpS1">pic.twitter.com/YI6JOtNpS1</a></p>&mdash; Earth (@earthcurated) <a href="https://twitter.com/earthcurated/status/1899046401989914653?ref_src=twsrc%5Etfw">March 10, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">... And When The Night Comes...<br><br>The northern part of the Atlantic Ocean illuminated by the Sunset light.<br><br>View from the International Space Station. <a href="https://t.co/yrmLo4gXjq">pic.twitter.com/yrmLo4gXjq</a></p>&mdash; ᑕOՏᗰIᑕ ᗰᗴՏՏᗴᑎᘜᗴᖇ ≈ 𝕃𝕦𝕚𝕤 𝔸𝕝𝕗𝕣𝕖𝕕𝕠⁷ ∞∃⊍ (@LuisADomDaly) <a href="https://twitter.com/LuisADomDaly/status/1979075447796191453?ref_src=twsrc%5Etfw">October 17, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">... Und wenn die Nacht kommt...<br><br>Der nördliche Teil des Atlantischen Ozeans, vom Sonnenuntergangslicht beleuchtet.<br><br>Ansicht von der Internationalen Raumstation. <a href="https://t.co/yrmLo4gXjq">pic.twitter.com/yrmLo4gXjq</a></p>&mdash; ᑕOՏᗰIᑕ ᗰᗴՏՏᗴᑎᘜᗴᖇ ≈ 𝕃𝕦𝕚𝕤 𝔸𝕝𝕗𝕣𝕖𝕕𝕠⁷ ∞∃⊍ (@LuisADomDaly) <a href="https://twitter.com/LuisADomDaly/status/1979075447796191453?ref_src=twsrc%5Etfw">October 17, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Looking out into the vastness of space from the windows of the ISS ✨🛰️ <a href="https://t.co/myU8kPKLXP">pic.twitter.com/myU8kPKLXP</a></p>&mdash; Space 8K (@uhd2020) <a href="https://twitter.com/uhd2020/status/1911204673970651406?ref_src=twsrc%5Etfw">April 12, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Blick in die Weiten des Alls aus den Fenstern der ISS ✨🛰️ <a href="https://t.co/myU8kPKLXP">pic.twitter.com/myU8kPKLXP</a></p>&mdash; Space 8K (@uhd2020) <a href="https://twitter.com/uhd2020/status/1911204673970651406?ref_src=twsrc%5Etfw">April 12, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">View of Auroras from the ISS in Space 😍🌌 <a href="https://t.co/pNqSKoA3T0">pic.twitter.com/pNqSKoA3T0</a></p>&mdash; Night Sky Today (@NightSkyToday) <a href="https://twitter.com/NightSkyToday/status/1975343563291685259?ref_src=twsrc%5Etfw">October 6, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>',
-        'translatedHtml': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Blick auf Polarlichter von der ISS im All 😍🌌 <a href="https://t.co/pNqSKoA3T0">pic.twitter.com/pNqSKoA3T0</a></p>&mdash; Night Sky Today (@NightSkyToday) <a href="https://twitter.com/NightSkyToday/status/1975343563291685259?ref_src=twsrc%5Etfw">October 6, 2025</a></div> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    }
-            ],
-            zeitungsartikel: [
-    {
-        'title': "Weltraumtourismus, der neue Trend",
-        'snippet': "Weltraumtourismus ist mehr als ein PR-Gag für Superreiche. Er markiert einen Paradigmenwechsel in der Raumfahrt: von staatlich gelenkter Forschung zu kommerziell geprägter Exploration. Auch wenn heute nur Wenige teilnehmen können, werden die technologischen Fortschritte, die Wettbewerbsdynamik und das wachsende Interesse auf lange Sicht dafür sorgen, dass das All immer näher rückt – nicht nur physisch, sondern auch emotional und kulturell.",
-        'link': "https://finanzkun.de/artikel/weltraumtourismus-der-neue-trend/",
-        'date': "11.04.2025",
-        'readTime': "4 Minuten",
-        'journal': "FinanzKun.de kompetent.transparent.informativ."
-    },
-    {
-        'title': "Müssen wir zuerst die Probleme auf der Erde lösen bevor wir uns auf den Weg in den Weltraum machen?",
-        'snippet': "Kurz gesagt: Ich bin der Meinung, dass sich die Frage „Müssen wir zuerst die Probleme auf der Erde lösen bevor wir uns auf den Weg in den Weltraum machen?“ gar nicht erst stellt. Wir müssen die Probleme lösen, ja! Aber der Weg spielt keine Rolle. Die Ressourcen die wir in eine etwaige Erforschung des Weltraums stecken sind nicht verschwendet, weil sie am Ende dabei helfen, die Probleme auf der Erde zu lösen. Und umgekehrt gilt das gleiche. Je mehr Wege wir bei der Lösung dieser Probleme verfolgen, desto besser! Und am Ende waren wir Menschen immer dann am erfolgreichsten, wenn wir unserer Neugier und unserer Faszination gefolgt sind…",
-        'link': "https://astrodicticum-simplex.at/2017/03/muessen-wir-zuerst-die-probleme-auf-der-erde-loesen-bevor-wir-uns-auf-den-weg-in-den-weltraum-machen/",
-        'date': "20.03.2017",
-        'readTime': "3 Minuten",
-        'journal': "Astrodicticum Simplex"
-    },
-    {
-        'title': "Reise zu den Sternen – der Boom des Weltraumtourismus",
-        'snippet': "Die Idee, ins Weltall zu reisen, fasziniert die Menschen seit jeher. Immer häufiger finden Raumfahrten auch für Tourist:innen statt. Die Unternehmerin Anousheh Ansari war 2006 selbst im All und will Flüge dorthin für alle möglich machen. […] Dank neuer Technologien, minimierter und optimierter Ausrüstungen sind die Kosten in den letzten Jahren deutlich gesunken. Anousheh Ansari rechnet damit, dass suborbitale Flüge in fünf bis zehn Jahren nur noch rund 10.000 bis 15.000 US-Dollar kosten werden. Auch das Angebotsspektrum soll erweitert werden – dazu gehören dann auch Umrundungen des Mondes.",
-        'link': "https://www.cntraveller.de/artikel/weltraumtourismus-reise-zu-den-sternen",
-        'date': "14.06.2025",
-        'readTime': "4 Minuten",
-        'journal': "Conde Nast Traveller"
-    },
-    {
-        'title': "Die Rolle des Weltraumtourismus in der modernen Raumfahrt",
-        'snippet': "Der Weltraumtourismus spricht sowohl innere Antriebe wie Neugier und den Wunsch nach Ruhm an, als auch äußere Reize wie die Aussicht auf die Erde aus dem All und das Gefühl der Schwerelosigkeit. Diese Kombination aus inneren und äußeren Faktoren macht den Reiz des Weltraumtourismus aus.",
-        'link': "https://www.it-boltwise.de/die-rolle-des-weltraumtourismus-in-der-modernen-raumfahrt.html",
-        'date': "19.05.2025",
-        'readTime': "3 Minuten",
-        'journal': "IT BOLTWISE"
-    },
-    {
-        'title': "Urlaub im All?",
-        'snippet': "Reisewarnungen und geschlossene Grenzen – nicht erst seit der Coronapandemie klingt die Vorstellung verlockend, einmal alles auf der Erde hinter sich lassen zu können. Doch wie realistisch ist Space Tourism? ÖAW-Weltraumexperte Günter Kargl erzählt im Interview, wo die Weltraumreise derzeit hingeht...",
-        'link': "https://www.oeaw.ac.at/news/urlaub-im-all",
-        'date': "28.09.2020",
-        'readTime': "3 Minuten",
-        'journal': "Österreichische Akademie der Wissenschaften"
-    },
-    {
-        'title': "ESA-Chef fordert mehr Geld, um Apokalypse abzuwenden",
-        'snippet': "Mit eindrucksvollen Argumenten hat Europas Raumfahrt-Chef Jan Wörner von den Ländern des Kontinents mehr Geld für gemeinsame Weltraumprojekte gefordert. „Wir wollen nicht wegen eines Meteoriten aussterben“, sagte der Vorsitzende der Europäischen Weltraumorganisation ESA in Sevilla zum Auftakt einer als wegweisend geltenden Ministerratskonferenz unter Hinweis auf das Schicksal der Dinosaurier.",
-        'link': "https://futurezone.at/science/esa-chef-fordert-mehr-geld-um-apokalypse-abzuwenden/400687742",
-        'date': "27.11.2019",
-        'readTime': "3 Minuten",
-        'journal': "Future Zone"
-    },
-
-    {
-        'title': "Wie unsere Technologien die Raumfahrt revolutionieren",
-        'snippet': "Wetter-Apps checken, Serien streamen oder den Camper navigieren – all das verdanken wir der Raumfahrttechnologie. […] Die Raumfahrt trägt entscheidend zum Komfort und zur Sicherheit unseres modernen Lebens bei und beeinflusst die Art und Weise, wie wir heute leben und arbeiten direkt und maßgeblich. Zum Beispiel, weil Satellitentechnik, die ursprünglich für die Weltraumkommunikation gedacht war, heute die Grundlage für weltweites Fernsehen, Internet und GPS-Navigation bildet. Gefriergetrocknete Lebensmittel oder angereicherte Babynahrung kommen ursprünglich aus Raumfahrtprogrammen. Auch die Medizin kommt ohne das All nicht aus – von kratzfesten Linsen, die eigentlich fürs All entwickelt wurden bis hin zur Magnetresonanztomografie (MRT), die für die Untersuchung der Mondoberfläche gedacht war und heute aus der medizinischen Diagnostik nicht mehr wegzudenken ist.",
-        'link': "https://www.voestalpine.com/blog/de/innovation-technologie/favoritemoments-im-weltall-wie-unsere-technologien-die-raumfahrt-revolutionieren/",
-        'date': "04.08.2025",
-        'readTime': "5 Minuten",
-        'journal': "Voestalpine"
-    },
-    {
-        'title': "Innovationen aus dem All",
-        'snippet': "Vom Satellitenbild bis zur Solarzelle: Innovationen aus der Raumfahrt sind längst auf der Erde angekommen – und bieten neue Perspektiven für Klima, Forschung und Wirtschaft. Astronautinnen und Astronauten, die aus dem All auf die Erde blicken, empfinden oft Ehrfurcht vor dem blauen Planeten, der – im Gegensatz zu den anderen Planeten unseres Sonnensystems – Leben ermöglicht. Laut Astronaut und ISS-Missionsleiter Alexander Gerst hilft ein Blick von außen auf das kleine «Raumschiff Erde»: Da erkenne man, «wie zerbrechlich seine Biosphäre ist und wie limitiert seine Ressourcen». Dieser Perspektivenwechsel – auch «overview effect» genannt – sorgt für ein Umdenken.",
-        'link': "https://www.globalance.com/news-trends/fruehling-2025-weltraumtechnologie/",
-        'date': "29.04.2025",
-        'readTime': "4 Minuten",
-        'journal': "Globalance"
-    },
-    {
-        'title': "Der Blick von oben auf das große Ganze",
-        'snippet': "Mike Massimo, der mit dem Space Shuttle unterwegs war und am Hubble-Weltraum-Teleskop arbeitete, berichtet: „Als ich bei meinem Weltraumspaziergang auf die Erde hinunterblickte, ging mir zuerst der Gedanke durch den Kopf, das müsse wohl der Blick vom Himmel aus sein.“ Dann aber kam ihm ein ganz anderer Gedanke: „Nein, so muss wohl der Himmel aussehen!’” […] Von einer solchen Erleuchtung durch Fokus auf das Positive hat schon der erste Mensch im All, Juri Gagarin, 1961 berichtet: „Ich sah, wie schön unser Planet ist. Leute, lasst uns diese Schönheit erhalten, statt sie zu zerstören.“ Und praktisch alle seine Nachfolger geben ihm recht, obwohl viele als gelernte Kampfpiloten nicht zur Gefühlsduselei neigten […] Der Vietnamese Pham Tuan ergänzte: „Nach sieben Flugtagen im Weltraum erkannte ich, dass der Mensch die Höhe vor allem braucht, um die Erde, die so vieles durchlitten hat, besser zu verstehen und zu erkennen, was aus der Nähe nicht wahrgenommen werden kann. Nicht allein, um von ihrer Schönheit in Bann geschlagen zu werden, sondern auch, um zu einem Verantwortungsgefühl für sie zu kommen.“",
-        'link': "https://rp-online.de/panorama/wissen/weltraum/overview-effekt-warum-astronauten-die-welt-anders-sehen_aid-130498793",
-        'date': "25.07.2025",
-        'readTime': "4 Minuten",
-        'journal': "Rheinische Post"
-    },
-    {
-        'title': "Overview Effekt – der Blick über den Tellerrand",
-        'snippet': "Das erste Bild der Erde in ihrer Gesamtheit entstand 1968 im Zuge der Apollo 8 Mission. Es zeigt den Aufgang der Erde aus den schwarzen Tiefen des Weltraums und erlangte weltweite Berühmtheit. Alle Astronauten berichten von einer Art Erleuchtung, die sie bei dem überwältigenden Anblick erfasste. Beschrieben als Gefühl der Ehrfurcht, Demut und ein neues Verständnis für die Verbundenheit allen Lebens. Ein verstärktes Verantwortungsbewusstsein schleicht sich ein.",
-        'link': "https://karlhosang.de/overview-effekt/",
-        'date': "nicht angegeben",
-        'readTime': "2 Minuten",
-        'journal': "Karl Hosang"
-    }
-
-
-            ],
-
-
-            chatbot: [] 
-        },
-    };
-
     function displayMeme(memeData) {
         contentArea.innerHTML = '';
 
@@ -740,6 +233,16 @@ document.addEventListener('DOMContentLoaded', () => {
         showLoadingScreen('memes', 'creating');
 
         showMemeNotification(loadingMessages.memes.creating2, 'loading');
+
+        // Sicherstellen, dass die Daten geladen sind
+        if (!allThemesContentData[currentThemeKey] || !allThemesContentData[currentThemeKey].memes) {
+            console.error("Meme-Daten sind für das aktuelle Thema nicht verfügbar.");
+            isMemeGenerationActive = false;
+            hideMemeNotification();
+            contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">Es konnten keine Memes geladen werden.</p>`;
+            return;
+        }
+
 
         if (memesArrayForGeneration.length === 0) {
             memesArrayForGeneration = shuffleArray(allThemesContentData[currentThemeKey].memes);
@@ -818,6 +321,13 @@ document.addEventListener('DOMContentLoaded', () => {
         contentArea.innerHTML = '';
         arePostsTranslated = useTranslated; // Zustand aktualisieren
         hasAskedForTranslation = true; // Frage wurde gestellt und beantwortet
+
+        // Sicherstellen, dass die Daten geladen sind
+        if (!allThemesContentData[currentThemeKey] || !allThemesContentData[currentThemeKey].postings) {
+            console.error("Postings-Daten sind für das aktuelle Thema nicht verfügbar.");
+            contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">Es konnten keine Beiträge geladen werden.</p>`;
+            return;
+        }
 
         const itemsToDisplay = shuffleArray([...allThemesContentData[currentThemeKey].postings]);
 
@@ -909,6 +419,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Sicherstellen, dass die Daten geladen sind und das Thema existiert
+        if (!allThemesContentData[currentThemeKey]) {
+            contentArea.innerHTML = `<p class="error-message">Fehler: Inhaltsdaten für das Thema "${currentThemeKey}" konnten nicht geladen werden oder existieren nicht.</p>`;
+            console.error(`Inhaltsdaten für das Thema "${currentThemeKey}" nicht verfügbar.`);
+            return;
+        }
+
         if (category === 'videos') {
             const videoMessageDiv = document.createElement('div');
             videoMessageDiv.classList.add('video-top-message');
@@ -927,7 +444,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             videoIntersectionObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    const playerId = entry.target.querySelector('.youtube-player-placeholder').id;
+                    const playerPlaceholder = entry.target.querySelector('.youtube-player-placeholder');
+                    if (!playerPlaceholder) return; // Überspringen, falls der Platzhalter nicht mehr existiert
+
+                    const playerId = playerPlaceholder.id;
                     const player = youtubePlayers[playerId];
 
                     if (!player || !player.muteButtonElement) {
@@ -954,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             } else {
                                 player.unMute();
                                 player.setVolume(10);
-                                if (muteBtn) muteBtn.innerHTML = volumeUpSvg;
+                                if (muteBtn) muteBtn.innerHTML = volumeUpSvg; 
                             }
                         }
                     } else if (!entry.isIntersecting && player.getPlayerState() === YT.PlayerState.PLAYING) {
@@ -1206,7 +726,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error(`YouTube Player Error for ${event.target.h.id}:`, event.data);
         const errorElement = document.getElementById(event.target.h.id);
         if (errorElement && errorElement.parentNode) {
-            const videoData = allThemesContentData[currentThemeKey].videos.find(v => v.embedUrl.includes(event.target.getVideoData().video_id));
+            // Sicherstellen, dass allThemesContentData existiert
+            const videoData = allThemesContentData[currentThemeKey]?.videos.find(v => v.embedUrl.includes(event.target.getVideoData().video_id));
             errorElement.parentNode.innerHTML = `
                 <div style="color: white; padding: 20px; text-align: center; background-color: #333; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                     <h3>Video nicht verfügbar</h3>
@@ -1218,102 +739,128 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Neue Funktion, die die Hauptanwendungslogik initialisiert, nachdem die Daten geladen wurden
+    function initializeApplicationLogic() {
+        // currentThemeKey kann jetzt sicher gesetzt werden, da allThemesContentData existiert
+        currentThemeKey = themeInput.value.toLowerCase();
 
-    buttons.forEach(button => {
-        button.addEventListener('click', () => {
-            const category = button.id.replace('btn', '').toLowerCase();
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const category = button.id.replace('btn', '').toLowerCase();
 
-            if (currentMainLoadingTimeoutId) {
-                clearTimeout(currentMainLoadingTimeoutId);
-                currentMainLoadingTimeoutId = null;
-            }
-
-            window.scrollTo({ top: 0, behavior: 'instant' });
-
-            if (!loadedCategoriesPerTheme[currentThemeKey]) {
-                loadedCategoriesPerTheme[currentThemeKey] = new Set();
-            }
-            const currentThemeLoadedCategories = loadedCategoriesPerTheme[currentThemeKey];
-
-            if (category === 'chatbot') {
-                displayContent(category);
-                currentThemeLoadedCategories.add(category);
-            } else if (category === 'postings') { // Besondere Logik für Postings
-                if (!currentThemeLoadedCategories.has(category) || !hasAskedForTranslation) {
-                    showLoadingScreen(category, 'searching');
-                    currentMainLoadingTimeoutId = setTimeout(() => {
-                        displayContent(category); // Dies wird showTranslationPrompt() oder renderPostings() aufrufen
-                        currentThemeLoadedCategories.add(category);
-                        currentMainLoadingTimeoutId = null;
-                    }, 5000); // Beispielhafte Ladezeit
-                } else {
-                    displayContent(category); // Wenn bereits geladen und Auswahl getroffen, direkt anzeigen
-                }
-            } else if (!currentThemeLoadedCategories.has(category)) {
-                showLoadingScreen(category);
-
-                if (category === 'videos' && Array.isArray(loadingMessages.videos)) {
-                    const loadingMessageTextElement = document.getElementById('loadingMessageText');
-                    setTimeout(() => {
-                        if (loadingMessageTextElement && loadingMessages.videos.length > 1) {
-                            loadingMessageTextElement.textContent = loadingMessages.videos[1];
-                        }
-                    }, 2500);
+                if (currentMainLoadingTimeoutId) {
+                    clearTimeout(currentMainLoadingTimeoutId);
+                    currentMainLoadingTimeoutId = null;
                 }
 
-                currentMainLoadingTimeoutId = setTimeout(() => {
-                    if (allThemesContentData[currentThemeKey] && allThemesContentData[currentThemeKey].videos) {
-                        allThemesContentData[currentThemeKey].videos = shuffleArray(allThemesContentData[currentThemeKey].videos);
-                    }
+                window.scrollTo({ top: 0, behavior: 'instant' });
+
+                if (!loadedCategoriesPerTheme[currentThemeKey]) {
+                    loadedCategoriesPerTheme[currentThemeKey] = new Set();
+                }
+                const currentThemeLoadedCategories = loadedCategoriesPerTheme[currentThemeKey];
+
+                if (category === 'chatbot') {
                     displayContent(category);
                     currentThemeLoadedCategories.add(category);
+                } else if (category === 'postings') { // Besondere Logik für Postings
+                    if (!currentThemeLoadedCategories.has(category) || !hasAskedForTranslation) {
+                        showLoadingScreen(category, 'searching');
+                        currentMainLoadingTimeoutId = setTimeout(() => {
+                            displayContent(category); // Dies wird showTranslationPrompt() oder renderPostings() aufrufen
+                            currentThemeLoadedCategories.add(category);
+                            currentMainLoadingTimeoutId = null;
+                        }, 5000); // Beispielhafte Ladezeit
+                    } else {
+                        displayContent(category); // Wenn bereits geladen und Auswahl getroffen, direkt anzeigen
+                    }
+                } else if (!currentThemeLoadedCategories.has(category)) {
+                    showLoadingScreen(category);
 
-                    if (category === 'videos' && mainContainer) {
+                    if (category === 'videos' && Array.isArray(loadingMessages.videos)) {
+                        const loadingMessageTextElement = document.getElementById('loadingMessageText');
                         setTimeout(() => {
-                           const targetScrollPosition = mainContainer.offsetTop + mainContainer.offsetHeight - window.innerHeight + 20;
+                            if (loadingMessageTextElement && loadingMessages.videos.length > 1) {
+                                loadingMessageTextElement.textContent = loadingMessages.videos[1];
+                            }
+                        }, 2500);
+                    }
 
-                           window.scrollTo({
-                               top: targetScrollPosition > 0 ? targetScrollPosition : 0,
-                               behavior: 'smooth'
-                           });
-                        }, 500);
-                    }
-                    currentMainLoadingTimeoutId = null;
-                }, 5000);
-            } else { // Wenn Kategorie bereits geladen
-                if (category === 'memes') {
-                    if (generatedMemeBuffer) {
-                        displayMeme(generatedMemeBuffer);
-                        askForAnotherMemePrompt();
-                        generatedMemeBuffer = null;
-                        isMemeGenerationActive = false;
-                        hideMemeNotification();
-                    }
-                    else if (isMemeGenerationActive) {
-                        showLoadingScreen(category, 'creating');
-                        showMemeNotification(loadingMessages.memes.creating, 'loading');
-                    }
-                    else {
-                        if (memesArrayForGeneration.length === 0) {
-                            memesArrayForGeneration = shuffleArray(allThemesContentData[currentThemeKey].memes);
+                    currentMainLoadingTimeoutId = setTimeout(() => {
+                        if (allThemesContentData[currentThemeKey] && allThemesContentData[currentThemeKey].videos) {
+                            allThemesContentData[currentThemeKey].videos = shuffleArray(allThemesContentData[currentThemeKey].videos);
                         }
-                        if (memesArrayForGeneration.length > 0) {
-                            showMemeGenerationPrompt();
+                        displayContent(category);
+                        currentThemeLoadedCategories.add(category);
+
+                        if (category === 'videos' && mainContainer) {
+                            setTimeout(() => {
+                               const targetScrollPosition = mainContainer.offsetTop + mainContainer.offsetHeight - window.innerHeight + 20;
+
+                               window.scrollTo({
+                                   top: targetScrollPosition > 0 ? targetScrollPosition : 0,
+                                   behavior: 'smooth'
+                               });
+                            }, 500);
+                        }
+                        currentMainLoadingTimeoutId = null;
+                    }, 5000);
+                } else { // Wenn Kategorie bereits geladen
+                    if (category === 'memes') {
+                        if (generatedMemeBuffer) {
+                            displayMeme(generatedMemeBuffer);
+                            askForAnotherMemePrompt();
+                            generatedMemeBuffer = null;
+                            isMemeGenerationActive = false;
                             hideMemeNotification();
-                        } else {
-                            contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">${loadingMessages.memes.allShown}</p>`;
-                            showMemeNotification(loadingMessages.memes.allShown, 'info', false);
                         }
+                        else if (isMemeGenerationActive) {
+                            showLoadingScreen(category, 'creating');
+                            showMemeNotification(loadingMessages.memes.creating, 'loading');
+                        }
+                        else {
+                            if (memesArrayForGeneration.length === 0) {
+                                memesArrayForGeneration = shuffleArray(allThemesContentData[currentThemeKey].memes);
+                            }
+                            if (memesArrayForGeneration.length > 0) {
+                                showMemeGenerationPrompt();
+                                hideMemeNotification();
+                            } else {
+                                contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">${loadingMessages.memes.allShown}</p>`;
+                                showMemeNotification(loadingMessages.memes.allShown, 'info', false);
+                            }
+                        }
+                    } else { // Für alle anderen Kategorien
+                        displayContent(category);
                     }
-                } else { // Für alle anderen Kategorien
-                    displayContent(category);
                 }
-            }
+            });
         });
-    });
 
-    contentArea.innerHTML = '<p>Wähle eine Option, um Beiträge zum Thema Weltraumtourismus zu sehen.</p>';
-    resetContentAreaStyles();
+        // Initialen Inhalt anzeigen, nachdem alles geladen ist
+        contentArea.innerHTML = '<p>Wähle eine Option, um Beiträge zum Thema Weltraumtourismus zu sehen.</p>';
+        resetContentAreaStyles();
+        hideMemeNotification();
+    }
 
-    hideMemeNotification();
+    // Lade die Inhaltsdaten, bevor die Anwendung gestartet wird
+    fetch('contentData.json')
+        .then(response => {
+            if (!response.ok) {
+                // Wenn die Antwort nicht OK ist (z.B. 404 Not Found), wirf einen Fehler
+                throw new Error(`HTTP error! Status: ${response.status} - Konnte contentData.json nicht laden.`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            allThemesContentData = data;
+            console.log("Inhaltsdaten erfolgreich geladen:", allThemesContentData);
+            initializeApplicationLogic(); // Starte die Hauptanwendungslogik
+        })
+        .catch(error => {
+            console.error("Fehler beim Laden der Inhaltsdaten:", error);
+            contentArea.innerHTML = `<p class="error-message">Ein Fehler ist aufgetreten: ${error.message}. Die Inhalte konnten nicht geladen werden.</p>`;
+            resetContentAreaStyles();
+            hideMemeNotification();
+        });
 });
