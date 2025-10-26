@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.log("Meme generated in background, waiting for user to return to Memes category.");
             }
-        }, 12000);
+        }, 1000);//Hier Zeit der Memegenerierung ändern
     }
 
     function askForAnotherMemePrompt() {
