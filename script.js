@@ -1,3 +1,24 @@
+
+// **********************************************
+// NEU: Globale Variablen und onYouTubeIframeAPIReady Definition an den Anfang verschieben
+// Dies stellt sicher, dass sie IMMER verfügbar ist, wenn das YouTube API Script lädt.
+// **********************************************
+let youtubeAPIReady = false;
+const videoInitializationQueue = [];
+
+// Diese Funktion wird von der YouTube Iframe API aufgerufen, sobald sie vollständig geladen ist.
+// Sie muss global sein.
+window.onYouTubeIframeAPIReady = function() {
+    console.log('YouTube API is ready!');
+    youtubeAPIReady = true;
+    // Verarbeite alle Videos, die in die Warteschlange gestellt wurden, bevor die API bereit war
+    while (videoInitializationQueue.length > 0) {
+        const videoData = videoInitializationQueue.shift();
+        initializeYouTubePlayer(videoData);
+    }
+};
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const contentArea = document.getElementById('contentArea');
     const buttons = document.querySelectorAll('.option-btn');
@@ -13,8 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let twitterWidgetsLoaded = false;
 
-    let youtubeAPIReady = false;
-    const videoInitializationQueue = [];
+    // youtubeAPIReady und videoInitializationQueue sind jetzt global definiert (siehe oben)
     const youtubePlayers = {};
 
     let currentPlayingVideoPlayer = null;
@@ -34,13 +54,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let arePostsTranslated = false;
     let hasAskedForTranslation = false; // Stellt sicher, dass die Übersetzungsfrage nur einmal gestellt wird
 
+    // Konstante für die Anzahl der Memes, die pro Batch generiert werden sollen
+    const MEMES_TO_GENERATE_BATCH = 4;
+
     const loadingMessages = {
         memes: {
             searching: "Durchsuche die Datenbank nach vorhandenen Memes...",
-            notFoundPrompt: "Zu diesem Thema wurden leider keine Memes gefunden. Möchtest du, dass ich ein Meme dazu erstelle?",
-            creating: "Erstelle Meme zum Thema Weltraumtourismus mit Hilfe von ChatGPT. Dies kann einige Minuten dauern, sieh dir daher inzwischen die anderen Kategorien dieser Website durch. Du bekommst eine Nachricht, sobald sie fertig ist.",
-            creating2: "Erstelle Meme",
-	        askAgain: "Soll ich noch ein Meme erstellen?",
+            notFoundPrompt: "Zu diesem Thema wurden leider keine Memes gefunden. Möchtest du, dass ich Memes dazu erstelle?", // Geändert zu Plural
+            creating: "Erstelle Memes zum Thema Weltraumtourismus. Dies kann einige Sekunden dauern, sieh dir daher inzwischen die anderen Kategorien dieser Website durch. Du bekommst eine Nachricht, sobald sie fertig sind.", // Geändert zu Plural
+            creating2: "Erstelle Memes", // Geändert zu Plural
+	        askAgain: "Soll ich noch ein Meme erstellen?", // Diese Nachricht wird nicht mehr verwendet
 	        allShown: "Es können keine neuen Memes mehr erstellt werden..."
         },
         videos: [
@@ -57,12 +80,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentMainLoadingTimeoutId = null;
     let memeGenerationTimeoutId = null;
-    let generatedMemeBuffer = null;
+    let generatedMemeBuffer = []; // Temporäres Array für die aktuell generierten Memes
+    let lastDisplayedMemeBatch = []; // Permanentes Array für die zuletzt generierten und angezeigten Memes
     let isMemeGenerationActive = false;
 	
-    let currentDisplayedMeme = null;
-
     let memesArrayForGeneration = [];
+
+    // **********************************************
+    // NEU: Video-Zustandsvariablen für die "All Ready"-Meldung
+    // **********************************************
+    let totalVideosExpected = 0;
+    let videosReadyCount = 0;
+    let allVideosReadyConsoleLogged = false;
+    let videoContentWrapperElement = null;
+    // NEU: Zeitstempel des Klicks auf die Video-Kategorie
+    let videoCategoryClickTime = 0;
 
 
     function showLoadingScreen(category, messageType = 'searching') {
@@ -100,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (clickable) {
             memeNotification.style.cursor = 'pointer';
+            notificationMessage.style.textDecoration = 'underline'; // Optional: Unterstreichung als visueller Hinweis
             memeNotification.onclick = () => {
                 if (btnMemes) {
                     btnMemes.click();
@@ -108,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         } else {
             memeNotification.style.cursor = 'default';
+            notificationMessage.style.textDecoration = 'none';
             memeNotification.onclick = null;
         }
 
@@ -117,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function hideMemeNotification() {
         memeNotification.classList.add('hidden');
         memeNotification.onclick = null;
-    } // Die überzählige Klammer wurde entfernt.
+    }
 
 
     notificationDismiss.addEventListener('click', (event) => {
@@ -169,18 +203,29 @@ document.addEventListener('DOMContentLoaded', () => {
             videoIntersectionObserver.disconnect();
             videoIntersectionObserver = null;
         }
-        for (const playerId in youtubePlayers) {
-            if (youtubePlayers[playerId] && typeof youtubePlayers[playerId].destroy === 'function') {
-                youtubePlayers[playerId].destroy();
+        // Destroy existing YouTube players
+        Object.values(youtubePlayers).forEach(player => {
+            if (player && typeof player.destroy === 'function') {
+                try {
+                    player.destroy();
+                } catch (e) {
+                    console.error("Error destroying YouTube player:", e);
+                }
             }
-            delete youtubePlayers[playerId];
+        });
+        // Clear the youtubePlayers object
+        for (const key in youtubePlayers) {
+            if (youtubePlayers.hasOwnProperty(key)) {
+                delete youtubePlayers[key];
+            }
         }
         currentPlayingVideoPlayer = null;
-
+        videoContentWrapperElement = null; // NEU: Resetten des Containers, wenn die Anzeige wechselt
+        videoCategoryClickTime = 0; // NEU: Resetten des Timestamps
     }
 
     const volumeUpSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.98 7-4.66 7-8.77s-2.99-7.79-7-8.77z"/></svg>`;
-    const volumeOffSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .96-.24 1.86-.65 2.68l1.66 1.66C21.23 14.6 22 13.31 22 12c0-4.07-3.05-7.44-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27l4.98 4.98L3 12v6h4l5 5V12.72L19.73 21 21 19.73 12.27 11 4.27 3zM10 15.27V12.73L12.42 15.15l-2.42.12z"/></svg>`;
+    const volumeOffSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .96-.24 1.86-.65 2.68l1.66 1.66C21.23 14.6 22 13.31 22 12c0-4.07-3.05-7.44-7-8.77v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71zM4.27 3L3 4.27l4.98 4.98L3 12v6h4l5 5V12.72L19.73 21 21 19.73 12.27 11 4.27 3zM10 15.27V12.73L12.42 15.15l-2.42.12z"/></svg>`;
 
 
     function toggleMute(player, buttonElement) {
@@ -196,31 +241,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function displayMeme(memeData) {
-        contentArea.innerHTML = '';
-
-        const memeDiv = document.createElement('div');
-        memeDiv.classList.add('content-item');
-        memeDiv.innerHTML = `
-            <h3>${memeData.title}</h3>
-            <img src="${memeData.image}" alt="${memeData.title}" style="max-width: 100%; height: auto; display: block; margin: 15px auto; border-radius: 4px;">
-        `;
-        contentArea.appendChild(memeDiv);
-        currentDisplayedMeme = memeData;
-    }
-
     function showMemeGenerationPrompt() {
-        contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">${loadingMessages.memes.notFoundPrompt}</p>`;
+        const promptWrapper = document.createElement('div');
+        promptWrapper.style.textAlign = 'center';
+        promptWrapper.style.marginTop = '20px';
+        promptWrapper.style.padding = '20px';
+        promptWrapper.style.backgroundColor = '#f8f9fa';
+        promptWrapper.style.border = '1px solid #dee2e6';
+        promptWrapper.style.borderRadius = '8px';
+        promptWrapper.style.boxShadow = '0 4px 8px rgba(0,0,0,0.05)';
+        promptWrapper.style.maxWidth = '400px';
+        promptWrapper.style.margin = '20px auto';
+
+        const promptParagraph = document.createElement('p');
+        promptParagraph.style.fontSize = '1.1em';
+        promptParagraph.style.marginBottom = '20px';
+        promptParagraph.textContent = loadingMessages.memes.notFoundPrompt;
+        promptWrapper.appendChild(promptParagraph);
+
         const generateButton = document.createElement('button');
         generateButton.textContent = "Ja, bitte";
         generateButton.classList.add('option-btn');
-        generateButton.style.marginTop = '20px';
+        generateButton.style.padding = '15px 35px';
+        generateButton.style.fontSize = '1.3em';
+        generateButton.style.fontWeight = 'bold';
+        generateButton.style.minWidth = '150px';
+
         generateButton.addEventListener('click', () => {
             if (!isMemeGenerationActive) {
                 startMemeGenerationProcess();
             }
         });
-        contentArea.appendChild(generateButton);
+        promptWrapper.appendChild(generateButton);
+
+        contentArea.innerHTML = '';
+        contentArea.appendChild(promptWrapper);
     }
 
     function startMemeGenerationProcess() {
@@ -231,10 +286,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         isMemeGenerationActive = true;
         showLoadingScreen('memes', 'creating');
-
         showMemeNotification(loadingMessages.memes.creating2, 'loading');
 
-        // Sicherstellen, dass die Daten geladen sind
         if (!allThemesContentData[currentThemeKey] || !allThemesContentData[currentThemeKey].memes) {
             console.error("Meme-Daten sind für das aktuelle Thema nicht verfügbar.");
             isMemeGenerationActive = false;
@@ -243,64 +296,63 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (memesArrayForGeneration.length === 0 && allThemesContentData[currentThemeKey].memes.length > 0) {
+            memesArrayForGeneration = shuffleArray([...allThemesContentData[currentThemeKey].memes]);
+        }
+        
+        generatedMemeBuffer = [];
 
-        if (memesArrayForGeneration.length === 0) {
-            memesArrayForGeneration = shuffleArray(allThemesContentData[currentThemeKey].memes);
+        const memesToGenerateInBatch = Math.min(MEMES_TO_GENERATE_BATCH, memesArrayForGeneration.length);
+        for (let i = 0; i < memesToGenerateInBatch; i++) {
+            generatedMemeBuffer.push(memesArrayForGeneration.shift());
         }
 
         if (memeGenerationTimeoutId) {
             clearTimeout(memeGenerationTimeoutId);
-            memeGenerationTimeoutId = null;
         }
 
         memeGenerationTimeoutId = setTimeout(() => {
             isMemeGenerationActive = false;
             memeGenerationTimeoutId = null;
 
-            if (memesArrayForGeneration.length > 0) {
-                generatedMemeBuffer = memesArrayForGeneration.shift();
-                showMemeNotification("Dein Meme ist fertig!", 'success', true);
+            if (generatedMemeBuffer.length > 0) {
+                lastDisplayedMemeBatch = [...generatedMemeBuffer];
+                showMemeNotification("Deine Memes sind fertig!", 'success', true);
             } else {
-                generatedMemeBuffer = null;
+                lastDisplayedMemeBatch = [];
                 showMemeNotification(loadingMessages.memes.allShown, 'info', false);
             }
+            
+            memesArrayForGeneration = [];
+            generatedMemeBuffer = [];
 
-            const currentContent = contentArea.querySelector('#loadingMessageText');
-            if (currentContent && currentContent.textContent.includes(loadingMessages.memes.creating)) {
-                if (generatedMemeBuffer) {
-                    displayMeme(generatedMemeBuffer);
-                    askForAnotherMemePrompt();
-                    generatedMemeBuffer = null;
-                } else {
-                    contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">${loadingMessages.memes.allShown}</p>`;
+            const currentLoadingMessageElement = contentArea.querySelector('#loadingMessageText');
+            if (currentLoadingMessageElement && currentLoadingMessageTextElement.textContent.includes(loadingMessages.memes.creating)) {
+                contentArea.innerHTML = ''; 
+
+                if (lastDisplayedMemeBatch.length > 0) {
+                    lastDisplayedMemeBatch.forEach(meme => {
+                        const memeDiv = document.createElement('div');
+                        memeDiv.classList.add('content-item', 'generated-meme');
+                        memeDiv.innerHTML = `
+                            <h3>${meme.title}</h3>
+                            <img src="${meme.image}" alt="${meme.title}" style="max-width: 100%; height: auto; display: block; margin: 15px auto; border-radius: 4px;">
+                        `;
+                        contentArea.appendChild(memeDiv);
+                    });
                 }
+                
+                const allShownMessageDiv = document.createElement('div');
+                allShownMessageDiv.style.textAlign = 'center';
+                allShownMessageDiv.style.marginTop = '20px';
+                allShownMessageDiv.innerHTML = `<p>${loadingMessages.memes.allShown}</p>`;
+                contentArea.appendChild(allShownMessageDiv);
+                
+                hideMemeNotification();
             } else {
-                console.log("Meme generated in background, waiting for user to return to Memes category.");
+                console.log("Memes generated in background, waiting for user to return to Memes category.");
             }
-        }, 1000);//Hier Zeit der Memegenerierung ändern
-    }
-
-    function askForAnotherMemePrompt() {
-        if (memesArrayForGeneration.length > 0) {
-            const askAgainDiv = document.createElement('div');
-            askAgainDiv.style.textAlign = 'center';
-            askAgainDiv.style.marginTop = '20px';
-            askAgainDiv.innerHTML = `<p>${loadingMessages.memes.askAgain}</p>`;
-
-            const yesButton = document.createElement('button');
-            yesButton.textContent = "Ja, bitte";
-            yesButton.classList.add('option-btn');
-            yesButton.addEventListener('click', () => {
-                if (!isMemeGenerationActive) {
-                    startMemeGenerationProcess();
-                }
-            });
-
-            askAgainDiv.appendChild(yesButton);
-            contentArea.appendChild(askAgainDiv);
-        } else {
-            contentArea.innerHTML += `<p style="text-align: center; margin-top: 20px;">${loadingMessages.memes.allShown}</p>`;
-        }
+        }, 4000);
     }
 
     function extractTweetText(htmlString) {
@@ -310,8 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pTag = doc.querySelector('blockquote.twitter-tweet p');
         if (pTag) {
             const clone = pTag.cloneNode(true);
-            clone.querySelectorAll('a').forEach(a => a.remove()); // Links, Hashtags, Mentions entfernen
-            // <br> durch Zeilenumbrüche ersetzen und HTML-Entitäten dekodieren
+            clone.querySelectorAll('a').forEach(a => a.remove());
             return clone.innerHTML.replace(/<br\s*\/?>/g, '\n').replace(/&amp;/g, '&').trim();
         }
         return '';
@@ -319,10 +370,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderPostings(useTranslated) {
         contentArea.innerHTML = '';
-        arePostsTranslated = useTranslated; // Zustand aktualisieren
-        hasAskedForTranslation = true; // Frage wurde gestellt und beantwortet
+        arePostsTranslated = useTranslated;
+        hasAskedForTranslation = true;
 
-        // Sicherstellen, dass die Daten geladen sind
         if (!allThemesContentData[currentThemeKey] || !allThemesContentData[currentThemeKey].postings) {
             console.error("Postings-Daten sind für das aktuelle Thema nicht verfügbar.");
             contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">Es konnten keine Beiträge geladen werden.</p>`;
@@ -334,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         itemsToDisplay.forEach(item => { 
             const postItemDiv = document.createElement('div');
             postItemDiv.classList.add('content-item');
-            postItemDiv.style.marginBottom = '30px'; // Abstand zwischen den Posts
+            postItemDiv.style.marginBottom = '30px';
 
             if (useTranslated && item.translatedHtml) {
                 const translatedText = extractTweetText(item.translatedHtml);
@@ -345,7 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     postItemDiv.appendChild(translatedTextElem);
                 }
             }
-            // Den originalen Tweet-Embed immer hinzufügen (entweder allein oder unter der Übersetzung)
             const tweetWrapper = document.createElement('div');
             tweetWrapper.innerHTML = item.html;
             postItemDiv.appendChild(tweetWrapper);
@@ -358,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contentArea.innerHTML = `
             <div id="translationPrompt" style="text-align: center; margin-top: 20px; padding: 20px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
                 <p style="font-size: 1.1em; margin-bottom: 20px;">Viele der gefundenen Posts sind auf Englisch. Sollen diese übersetzt werden?</p>
-                <button id="translateYes" class="option-btn" style="margin-right: 15px; padding: 10px 20px;">Ja</button>
+                <button id="translateYes" class="option-btn" style="margin-right: 30px; padding: 10px 20px;">Ja</button>
                 <button id="translateNo" class="option-btn" style="padding: 10px 20px;">Nein</button>
             </div>
         `;
@@ -366,15 +415,67 @@ document.addEventListener('DOMContentLoaded', () => {
         const noButton = document.getElementById('translateNo');
 
         yesButton.addEventListener('click', () => {
-            showLoadingScreen('postings', 'translating'); // Zeigt den Ladebildschirm "Übersetze Beiträge..."
+            showLoadingScreen('postings', 'translating');
             setTimeout(() => {
-                renderPostings(true); // Beiträge mit Übersetzung anzeigen
-            }, 3000); // 3 Sekunden Ladezeit
+                renderPostings(true);
+            }, 3000);
         });
 
         noButton.addEventListener('click', () => {
-            renderPostings(false); // Beiträge ohne Übersetzung anzeigen
+            renderPostings(false);
         });
+    }
+
+    // **********************************************
+    // NEU: Funktion zum Prüfen und Anzeigen des Video-Containers
+    // **********************************************
+    function checkAndDisplayVideoContent() {
+        // Mindestens 5 Sekunden müssen seit dem Klick vergangen sein.
+        // `videoCategoryClickTime` wird auf 0 gesetzt, wenn die Videos angezeigt werden,
+        // um zu verhindern, dass die Bedingungen für eine zukünftige Anzeige fälschlicherweise erfüllt sind.
+        const fiveSecondsPassed = (Date.now() - videoCategoryClickTime) >= 5000;
+        
+        // Beide Bedingungen müssen erfüllt sein: Alle Videos sind bereit UND die Wartezeit ist abgelaufen.
+        if (allVideosReadyConsoleLogged && fiveSecondsPassed) {
+            console.log(`%c[VIDEO STATUS] Both conditions met: Videos are ready AND 5 seconds have passed. Displaying video content.`, 'color: #007bff; font-weight: bold;');
+            
+            const loadingOverlay = contentArea.querySelector('.loading-overlay');
+            if (loadingOverlay) loadingOverlay.remove();
+            
+            if (videoContentWrapperElement) {
+                videoContentWrapperElement.style.display = 'block'; // Videos sichtbar machen
+
+                // ******************************************************************************
+                // NEU: Scroll-Logik hier hinzufügen
+                // ******************************************************************************
+                if (mainContainer && videoContentWrapperElement) {
+                   // Berechne die Position des videoContentWrapperElement im Verhältnis zum Dokument
+                   const wrapperRect = videoContentWrapperElement.getBoundingClientRect();
+                   const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+                   
+                   // Die gewünschte Scroll-Position ist der obere Rand des Wrappers
+                   // abzüglich eines kleinen Offsets (z.B. für eine mögliche feste Kopfzeile oder Polsterung)
+                   // oder um sicherzustellen, dass der gesamte Player im View ist.
+                   const targetScrollPosition = wrapperRect.top + currentScrollY;
+                   
+                   window.scrollTo({
+                       top: targetScrollPosition,
+                       behavior: 'smooth'
+                   });
+                   console.log(`[SCROLL] Scrolled to video content at Y-position: ${targetScrollPosition}`);
+                }
+            }
+            videoCategoryClickTime = 0; // Reset für den nächsten Klick auf Videos
+        } else {
+            console.log(`%c[VIDEO STATUS] Waiting for conditions: Ready: ${allVideosReadyConsoleLogged}, 5s Passed: ${fiveSecondsPassed}.`, 'color: orange;');
+            // Wenn die 5 Sekunden abgelaufen sind, aber Videos noch nicht bereit,
+            // setzen wir einen kurzen Timer, um erneut zu prüfen.
+            // Dies ist wichtig, da `onPlayerReady` nur bei Video-Bereitschaft triggert,
+            // aber nicht, wenn die 5s später ablaufen.
+            if (fiveSecondsPassed && !allVideosReadyConsoleLogged) {
+                 setTimeout(checkAndDisplayVideoContent, 500); // Erneut prüfen, falls Player noch nicht bereit
+            }
+        }
     }
 
 
@@ -394,9 +495,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else {
             resetContentAreaStyles();
         }
-
-        contentArea.innerHTML = '';
-
 
         if (category === 'chatbot') {
             contentArea.innerHTML = `
@@ -419,51 +517,74 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Sicherstellen, dass die Daten geladen sind und das Thema existiert
         if (!allThemesContentData[currentThemeKey]) {
-            contentArea.innerHTML = `<p class="error-message">Fehler: Inhaltsdaten für das Thema "${currentThemeKey}" konnten nicht geladen werden oder existieren nicht.</p>`;
+            contentArea.innerHTML = `<p class="error-message">Fehler: Inhaltsdaten für das Thema "${currentThemeKey}" konnten nicht geladen werden oder existieren nicht anhand des aktuellen Themes: "${currentThemeKey}".</p>`;
             console.error(`Inhaltsdaten für das Thema "${currentThemeKey}" nicht verfügbar.`);
             return;
         }
 
         if (category === 'videos') {
+            showLoadingScreen(category); // Zeigt den Ladebildschirm.
+
+            videoContentWrapperElement = document.createElement('div');
+            videoContentWrapperElement.style.display = 'none'; // Initial ausgeblendet
+            videoContentWrapperElement.classList.add('video-content-wrapper');
+
             const videoMessageDiv = document.createElement('div');
             videoMessageDiv.classList.add('video-top-message');
             videoMessageDiv.innerHTML = `
                 <p>Swipe im Videoplayer nach unten, um weitere Kurzvideos zu entdecken.</p>
             `;
-            contentArea.appendChild(videoMessageDiv);
+            videoContentWrapperElement.appendChild(videoMessageDiv);
 
             const videoPlayerContainer = document.createElement('div');
             videoPlayerContainer.classList.add('video-player-container');
+            videoContentWrapperElement.appendChild(videoPlayerContainer);
+
+            contentArea.appendChild(videoContentWrapperElement);
 
             const videosToInit = [];
-
             const videos = shuffleArray([...allThemesContentData[currentThemeKey].videos]);
+
+            totalVideosExpected = videos.length;
+            videosReadyCount = 0;
+            allVideosReadyConsoleLogged = false;
+
+            if (totalVideosExpected === 0) {
+                console.log(`%c[VIDEO STATUS] No videos to initialize for this theme. All (0) videos are considered ready.`, 'color: green; font-weight: bold;');
+                allVideosReadyConsoleLogged = true; // Markiere als bereit, da keine Videos zu laden sind
+                videoContentWrapperElement.style.display = 'block';
+                const loadingOverlay = contentArea.querySelector('.loading-overlay');
+                if (loadingOverlay) loadingOverlay.remove();
+                return;
+            }
 
 
             videoIntersectionObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     const playerPlaceholder = entry.target.querySelector('.youtube-player-placeholder');
-                    if (!playerPlaceholder) return; // Überspringen, falls der Platzhalter nicht mehr existiert
+                    if (!playerPlaceholder) return; 
 
                     const playerId = playerPlaceholder.id;
                     const player = youtubePlayers[playerId];
 
-                    if (!player || !player.muteButtonElement) {
-                        console.warn(`Player ${playerId} oder zugehörige Buttons nicht gefunden oder nicht bereit für IntersectionObserver.`);
+                    if (!player || !player.isApiReady || !player.muteButtonElement || !player.originalVideoId) {
                         return;
                     }
 
+                    // --- Playback Logic: Video enters full view (>= 80%) ---
                     if (entry.isIntersecting && entry.intersectionRatio >= 0.8) {
-                        if (currentPlayingVideoPlayer && currentPlayingVideoPlayer !== player) {
-                            console.log(`Stopping player ${currentPlayingVideoPlayer.h.id}`);
-                            currentPlayingVideoPlayer.pauseVideo();
-                            currentPlayingVideoPlayer.seekTo(0);
-                        }
-
                         if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                            console.log(`Playing player ${playerId}`);
+                            console.log(`[IO] Playing video: ${playerId}`);
+
+                            Object.values(youtubePlayers).forEach(p => {
+                                if (p !== player && p.isApiReady && typeof p.getPlayerState === 'function' && 
+                                    (p.getPlayerState() === YT.PlayerState.PLAYING || p.getPlayerState() === YT.PlayerState.BUFFERING)) {
+                                    console.log(`[IO] Force pausing video: ${p.getIframe().id} (another video is now active).`);
+                                    p.pauseVideo();
+                                }
+                            });
+                            
                             player.playVideo();
                             currentPlayingVideoPlayer = player;
 
@@ -477,18 +598,33 @@ document.addEventListener('DOMContentLoaded', () => {
                                 if (muteBtn) muteBtn.innerHTML = volumeUpSvg; 
                             }
                         }
-                    } else if (!entry.isIntersecting && player.getPlayerState() === YT.PlayerState.PLAYING) {
-                        console.log(`Pausing player ${playerId} because it's out of view.`);
-                        player.pauseVideo();
+                        player.isCued = true;
+                    }
+                    // --- Pre-buffering/Cueing Logic: Video enters partial view (0% to < 80%) ---
+                    else if (entry.isIntersecting && entry.intersectionRatio > 0 && entry.intersectionRatio < 0.8) {
+                        if (player.getPlayerState() === YT.PlayerState.UNSTARTED && !player.isCued) {
+                            console.log(`[IO] Cueing video for pre-buffering: ${playerId}`);
+                            player.cueVideoById(player.originalVideoId);
+                            player.isCued = true;
+                        }
+                    }
+                    // --- Out of View Logic: Video leaves view (0% or less intersection) ---
+                    else if (!entry.isIntersecting) {
+                        if (player.getPlayerState() === YT.PlayerState.PLAYING || player.getPlayerState() === YT.PlayerState.BUFFERING) {
+                            console.log(`[IO] Pausing video out of view: ${playerId}`);
+                            player.pauseVideo();
+                        }
                         if (currentPlayingVideoPlayer === player) {
+                            console.log(`[IO] Clearing currentPlayingVideoPlayer: ${playerId}`);
                             currentPlayingVideoPlayer = null;
                         }
+                        player.isCued = false;
                     }
                 });
             }, {
                 root: videoPlayerContainer,
-                rootMargin: '0px',
-                threshold: 0.8
+                rootMargin: '0px 0px 300px 0px',
+                threshold: [0, 0.8]
             });
 
 
@@ -531,8 +667,6 @@ document.addEventListener('DOMContentLoaded', () => {
             videoIntersectionObserver.observe(endSlide);
 
 
-            contentArea.appendChild(videoPlayerContainer);
-
             videosToInit.forEach(videoData => {
                 if (youtubeAPIReady) {
                     initializeYouTubePlayer(videoData);
@@ -541,30 +675,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            if (videosToInit.length > 0) {
-                setTimeout(() => {
-                    const firstVideoPlayer = youtubePlayers[videosToInit[0].id];
-                    if (firstVideoPlayer && typeof firstVideoPlayer.playVideo === 'function') {
-                        console.log('Manually playing first video');
-                        firstVideoPlayer.playVideo();
-                        currentPlayingVideoPlayer = firstVideoPlayer;
-
-                        if (isGloballyMuted) {
-                            firstVideoPlayer.mute();
-                            if (firstVideoPlayer.muteButtonElement) firstVideoPlayer.muteButtonElement.innerHTML = volumeOffSvg;
-                        } else {
-                            firstVideoPlayer.unMute();
-                            firstVideoPlayer.setVolume(10);
-                            if (firstVideoPlayer.muteButtonElement) firstVideoPlayer.muteButtonElement.innerHTML = volumeUpSvg;
-                        }
-                    }
-                }, 100);
-            }
-
-            return;
+            return; // Beende displayContent hier. Die Videos werden später sichtbar gemacht.
         }
+        // ******************************************************************************
+        // ENDE DER VIDEO-SPEZIFISCHEN LOGIK IN displayContent
+        // ******************************************************************************
 
 
+        contentArea.innerHTML = ''; // Leere den contentArea für nicht-Video-Kategorien, falls ein Ladebildschirm aktiv war
         let itemsToDisplay = allThemesContentData[currentThemeKey] ? allThemesContentData[currentThemeKey][category] : null;
 
         if (!itemsToDisplay || itemsToDisplay.length === 0) {
@@ -572,52 +690,52 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (category === 'zeitungsartikel') { // postings wird separat behandelt
+        if (category === 'zeitungsartikel') {
             itemsToDisplay = shuffleArray(itemsToDisplay);
         }
 
         switch (category) {
             case 'memes':
-            if (isMemeGenerationActive) {
-                showLoadingScreen(category, 'creating');
-                showMemeNotification(loadingMessages.memes.creating, 'loading');
-                return;
-            }
-
-            if (generatedMemeBuffer) {
-                contentArea.innerHTML = '';
-                displayMeme(generatedMemeBuffer);
-                askForAnotherMemePrompt();
-                generatedMemeBuffer = null;
-                isMemeGenerationActive = false;
-                hideMemeNotification();
-                return;
-            }
-
-            if (currentDisplayedMeme) {
-                const memeImageInDOM = contentArea.querySelector(`img[src="${currentDisplayedMeme.image}"]`);
-
-                if (!memeImageInDOM) {
-                    contentArea.innerHTML = '';
-                    displayMeme(currentDisplayedMeme);
+                if (lastDisplayedMemeBatch.length > 0) {
+                    contentArea.innerHTML = ''; 
+                    lastDisplayedMemeBatch.forEach(meme => {
+                        const memeDiv = document.createElement('div');
+                        memeDiv.classList.add('content-item', 'generated-meme');
+                        memeDiv.innerHTML = `
+                            <h3>${meme.title}</h3>
+                            <img src="${meme.image}" alt="${meme.title}" style="max-width: 100%; height: auto; display: block; margin: 15px auto; border-radius: 4px;">
+                        `;
+                        contentArea.appendChild(memeDiv);
+                    });
+                    
+                    const allShownMessageDiv = document.createElement('div');
+                    allShownMessageDiv.style.textAlign = 'center';
+                    allShownMessageDiv.style.marginTop = '20px';
+                    allShownMessageDiv.innerHTML = `<p>${loadingMessages.memes.allShown}</p>`;
+                    contentArea.appendChild(allShownMessageDiv);
+                    hideMemeNotification();
+                    return;
                 }
-                askForAnotherMemePrompt();
-                hideMemeNotification();
-                return;
-            }
 
-            if (memesArrayForGeneration.length === 0) {
-                memesArrayForGeneration = shuffleArray(allThemesContentData[currentThemeKey].memes);
-            }
+                if (memesArrayForGeneration.length === 0 && allThemesContentData[currentThemeKey] && allThemesContentData[currentThemeKey].memes && allThemesContentData[currentThemeKey].memes.length > 0) {
+                    memesArrayForGeneration = shuffleArray([...allThemesContentData[currentThemeKey].memes]);
+                }
 
-            if (memesArrayForGeneration.length > 0) {
+                if (isMemeGenerationActive) {
+                    showLoadingScreen(category, 'creating');
+                    showMemeNotification(loadingMessages.memes.creating, 'loading');
+                    return;
+                }
+
+                if (memesArrayForGeneration.length === 0) {
+                    contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">${loadingMessages.memes.allShown}</p>`;
+                    showMemeNotification(loadingMessages.memes.allShown, 'info', false);
+                    return;
+                }
+
                 showMemeGenerationPrompt();
-                hideMemeNotification();
-            } else {
-                contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">${loadingMessages.memes.allShown}</p>`;
-                showMemeNotification(loadingMessages.memes.allShown, 'info', false);
-            }
-            break;
+                hideMemeNotification(); 
+                break;
             case 'postings':
                 if (!hasAskedForTranslation) {
                     showTranslationPrompt(); // Frage nach Übersetzung stellen
@@ -647,15 +765,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    window.onYouTubeIframeAPIReady = function() {
-        console.log('YouTube API is ready!');
-        youtubeAPIReady = true;
-        while (videoInitializationQueue.length > 0) {
-            const videoData = videoInitializationQueue.shift();
-            initializeYouTubePlayer(videoData);
-        }
-    };
-
     function initializeYouTubePlayer(videoData) {
         const playerElement = document.getElementById(videoData.id);
         if (!playerElement) {
@@ -684,29 +793,47 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         youtubePlayers[videoData.id] = player;
-
         player.muteButtonElement = videoData.muteButton;
+        player.isApiReady = false; // Initialisiere den Ready-Zustand des Players
+        player.isCued = false;    // NEU: Zustand für Cueing initialisieren
+        player.originalVideoId = videoData.videoId; // NEU: VideoId auf dem Player-Objekt speichern
 
         console.log(`Player ${videoData.id} initialization attempted for video ID ${videoData.videoId}.`);
     }
 
     function onPlayerReady(event, muteButtonElement) {
-        console.log(`Player ${event.target.h.id} is ready.`);
+        const player = event.target;
+        player.isApiReady = true; // Markiere den Player als API-ready
+        const playerId = player.getIframe().id; // Robustere ID-Abfrage
+        console.log(`Player ${playerId} is ready.`);
+
         if (muteButtonElement) {
-            muteButtonElement.addEventListener('click', () => toggleMute(event.target, muteButtonElement));
+            muteButtonElement.addEventListener('click', () => toggleMute(player, muteButtonElement));
             if (isGloballyMuted) {
-                event.target.mute();
+                player.mute();
                 muteButtonElement.innerHTML = volumeOffSvg;
             } else {
-                event.target.unMute();
-                event.target.setVolume(3);
+                player.unMute();
+                player.setVolume(3);
                 muteButtonElement.innerHTML = volumeUpSvg;
             }
+        }
+
+        videosReadyCount++;
+        if (videosReadyCount === totalVideosExpected && !allVideosReadyConsoleLogged) {
+            console.log(`%c[VIDEO STATUS] All ${totalVideosExpected} YouTube players are ready for the current theme!`, 'color: green; font-weight: bold;');
+            allVideosReadyConsoleLogged = true;
+            checkAndDisplayVideoContent(); // NEU: Prüfe, ob Videos angezeigt werden sollen
         }
     }
 
     function onPlayerStateChange(event, muteButtonElement) {
-        const playerId = event.target.h.id;
+        if (!event.target.isApiReady) {
+            console.warn("onPlayerStateChange fired for a non-API-ready player. Ignoring.");
+            return;
+        }
+
+        const playerId = event.target.getIframe().id;
         const player = youtubePlayers[playerId];
 
         if (muteButtonElement) {
@@ -723,11 +850,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function onPlayerError(event) {
-        console.error(`YouTube Player Error for ${event.target.h.id}:`, event.data);
-        const errorElement = document.getElementById(event.target.h.id);
+        const playerId = event.target && typeof event.target.getIframe === 'function' ? event.target.getIframe().id : 'Unknown Player (pre-API-ready error?)';
+        console.error(`YouTube Player Error for ${playerId}:`, event.data);
+
+        const errorElement = document.getElementById(playerId);
         if (errorElement && errorElement.parentNode) {
-            // Sicherstellen, dass allThemesContentData existiert
-            const videoData = allThemesContentData[currentThemeKey]?.videos.find(v => v.embedUrl.includes(event.target.getVideoData().video_id));
+            const videoData = allThemesContentData[currentThemeKey]?.videos.find(v => v.embedUrl.includes(event.target.getVideoData ? event.target.getVideoData().video_id : ''));
             errorElement.parentNode.innerHTML = `
                 <div style="color: white; padding: 20px; text-align: center; background-color: #333; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                     <h3>Video nicht verfügbar</h3>
@@ -739,9 +867,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Neue Funktion, die die Hauptanwendungslogik initialisiert, nachdem die Daten geladen wurden
     function initializeApplicationLogic() {
-        // currentThemeKey kann jetzt sicher gesetzt werden, da allThemesContentData existiert
         currentThemeKey = themeInput.value.toLowerCase();
 
         buttons.forEach(button => {
@@ -763,91 +889,70 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (category === 'chatbot') {
                     displayContent(category);
                     currentThemeLoadedCategories.add(category);
-                } else if (category === 'postings') { // Besondere Logik für Postings
+                } else if (category === 'postings') {
                     if (!currentThemeLoadedCategories.has(category) || !hasAskedForTranslation) {
                         showLoadingScreen(category, 'searching');
                         currentMainLoadingTimeoutId = setTimeout(() => {
-                            displayContent(category); // Dies wird showTranslationPrompt() oder renderPostings() aufrufen
+                            displayContent(category);
                             currentThemeLoadedCategories.add(category);
                             currentMainLoadingTimeoutId = null;
-                        }, 5000); // Beispielhafte Ladezeit
+                        }, 5000);
                     } else {
-                        displayContent(category); // Wenn bereits geladen und Auswahl getroffen, direkt anzeigen
+                        displayContent(category);
                     }
-                } else if (!currentThemeLoadedCategories.has(category)) {
-                    showLoadingScreen(category);
-
-                    if (category === 'videos' && Array.isArray(loadingMessages.videos)) {
-                        const loadingMessageTextElement = document.getElementById('loadingMessageText');
-                        setTimeout(() => {
-                            if (loadingMessageTextElement && loadingMessages.videos.length > 1) {
-                                loadingMessageTextElement.textContent = loadingMessages.videos[1];
-                            }
-                        }, 2500);
-                    }
-
+                } else if (category === 'videos') { // ANGEPASST für Videos
+                    // ******************************************************************************
+                    // Ladebildschirm wird in displayContent(category) aufgerufen.
+                    // Der 5-Sekunden-Timer startet hier.
+                    // displayContent(category) wird direkt aufgerufen, um die Videos zu initialisieren.
+                    // ******************************************************************************
+                    videoCategoryClickTime = Date.now(); // Zeitstempel des Klicks setzen
+                    
+                    // Setze den Timer, der nach 5 Sekunden `checkAndDisplayVideoContent` aufruft.
+                    // Dieser Timer muss immer laufen, auch wenn Videos schneller bereit sind.
                     currentMainLoadingTimeoutId = setTimeout(() => {
-                        if (allThemesContentData[currentThemeKey] && allThemesContentData[currentThemeKey].videos) {
-                            allThemesContentData[currentThemeKey].videos = shuffleArray(allThemesContentData[currentThemeKey].videos);
-                        }
-                        displayContent(category);
-                        currentThemeLoadedCategories.add(category);
-
-                        if (category === 'videos' && mainContainer) {
-                            setTimeout(() => {
-                               const targetScrollPosition = mainContainer.offsetTop + mainContainer.offsetHeight - window.innerHeight + 20;
-
-                               window.scrollTo({
-                                   top: targetScrollPosition > 0 ? targetScrollPosition : 0,
-                                   behavior: 'smooth'
-                               });
-                            }, 500);
-                        }
-                        currentMainLoadingTimeoutId = null;
+                        checkAndDisplayVideoContent(); 
+                        currentMainLoadingTimeoutId = null; // Lösche die ID, da der Timer abgelaufen ist.
                     }, 5000);
-                } else { // Wenn Kategorie bereits geladen
-                    if (category === 'memes') {
-                        if (generatedMemeBuffer) {
-                            displayMeme(generatedMemeBuffer);
-                            askForAnotherMemePrompt();
-                            generatedMemeBuffer = null;
-                            isMemeGenerationActive = false;
-                            hideMemeNotification();
-                        }
-                        else if (isMemeGenerationActive) {
-                            showLoadingScreen(category, 'creating');
-                            showMemeNotification(loadingMessages.memes.creating, 'loading');
-                        }
-                        else {
-                            if (memesArrayForGeneration.length === 0) {
-                                memesArrayForGeneration = shuffleArray(allThemesContentData[currentThemeKey].memes);
-                            }
-                            if (memesArrayForGeneration.length > 0) {
-                                showMemeGenerationPrompt();
-                                hideMemeNotification();
-                            } else {
-                                contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">${loadingMessages.memes.allShown}</p>`;
-                                showMemeNotification(loadingMessages.memes.allShown, 'info', false);
-                            }
-                        }
-                    } else { // Für alle anderen Kategorien
-                        displayContent(category);
+
+                    if (allThemesContentData[currentThemeKey] && allThemesContentData[currentThemeKey].videos) {
+                        allThemesContentData[currentThemeKey].videos = shuffleArray(allThemesContentData[currentThemeKey].videos);
                     }
+                    displayContent(category); // Rufe displayContent direkt auf, um Videos im Hintergrund zu initialisieren
+                    currentThemeLoadedCategories.add(category);
+
+                } else { // Für andere bereits geladene Kategorien
+                    displayContent(category);
                 }
             });
         });
 
-        // Initialen Inhalt anzeigen, nachdem alles geladen ist
         contentArea.innerHTML = '<p>Wähle eine Option, um Beiträge zum Thema Weltraumtourismus zu sehen.</p>';
         resetContentAreaStyles();
         hideMemeNotification();
     }
 
-    // Lade die Inhaltsdaten, bevor die Anwendung gestartet wird
+    // **********************************************
+    // Dynamisches Laden des YouTube Iframe API Scripts IM DOMContentLoaded
+    // Dies wird nach der globalen Definition der onYouTubeIframeAPIReady platziert.
+    // **********************************************
+    if (typeof YT === 'undefined' || !YT.Player) {
+        console.log("Dynamisch lade YouTube Iframe API Script...");
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    } else {
+        console.log("YouTube API Objekt existiert bereits. Synchronisiere internen Bereitschaftsstatus.");
+        if (!youtubeAPIReady) {
+            window.onYouTubeIframeAPIReady();
+        }
+    }
+
+
     fetch('contentData.json')
         .then(response => {
             if (!response.ok) {
-                // Wenn die Antwort nicht OK ist (z.B. 404 Not Found), wirf einen Fehler
                 throw new Error(`HTTP error! Status: ${response.status} - Konnte contentData.json nicht laden.`);
             }
             return response.json();
@@ -855,7 +960,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             allThemesContentData = data;
             console.log("Inhaltsdaten erfolgreich geladen:", allThemesContentData);
-            initializeApplicationLogic(); // Starte die Hauptanwendungslogik
+            initializeApplicationLogic();
         })
         .catch(error => {
             console.error("Fehler beim Laden der Inhaltsdaten:", error);
